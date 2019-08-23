@@ -1,0 +1,76 @@
+syntax = "proto2";
+package nmsg.base;
+
+enum DnsQRType {
+    UDP_INVALID = 0;
+    UDP_QUERY_RESPONSE = 1;
+    UDP_UNANSWERED_QUERY = 2;
+    UDP_UNSOLICITED_RESPONSE = 3;
+    TCP = 4;
+    ICMP = 5;
+    UDP_QUERY_ONLY = 6;
+    UDP_RESPONSE_ONLY = 7;
+}
+
+enum UdpChecksum {
+    ERROR = 0;
+    ABSENT = 1;
+    INCORRECT = 2;
+    CORRECT = 3;
+}
+
+message DnsQR {
+    required DnsQRType          type = 1;
+
+    // the 9-tuple
+
+    required bytes              query_ip = 2;
+    required bytes              response_ip = 3;
+    required uint32             proto = 4;
+    required uint32             query_port = 5;
+    required uint32             response_port = 6;
+
+    required uint32             id = 7;
+    optional bytes              qname = 8;
+    optional uint32             qtype = 9;
+    optional uint32             qclass = 10;
+
+    // rcode from the response
+
+    optional uint32             rcode = 11;
+
+    // packet data
+
+    repeated bytes              query_packet = 12;
+    repeated int64              query_time_sec = 13;
+    repeated sfixed32           query_time_nsec = 14;
+
+    repeated bytes              response_packet = 15;
+    repeated int64              response_time_sec = 16;
+    repeated sfixed32           response_time_nsec = 17;
+
+    // only used if type = TCP
+
+    optional bytes              tcp = 18;
+
+    // only used if type = ICMP
+
+    optional bytes              icmp = 19;
+
+    // only set for UDP_UNANSWERED_QUERY
+
+    optional double             timeout = 20;
+
+    // the result of UDP checksum verification of the response datagram.
+    // note that the query datagram isn't checksummed, since a) the relevant
+    // information from the query is almost always included in the response,
+    // b) when capturing from the perspective of an initiator, the outbound
+    // query is commonly subject to UDP checksum offload and will be incorrect
+    // anyway.
+
+    optional UdpChecksum        udp_checksum = 21;
+
+    // set if the address of the initiator was zeroed.
+
+    optional bool               resolver_address_zeroed = 22;
+}

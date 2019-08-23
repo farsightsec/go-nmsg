@@ -1,0 +1,6 @@
+go-nmsg (0.1.1-1) debian-farsightsec; urgency=medium
+
+  * Initial public release.
+
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Fri, 23 Aug 2019 12:00:00 -0500
+

@@ -1,0 +1,7 @@
+syntax = "proto2";
+package nmsg.base;
+
+message Xml {
+    required bytes      xmltype = 1;
+    required bytes      xmlpayload = 2;
+}

@@ -1,0 +1,46 @@
+Source: go-nmsg
+Section: net
+Priority: optional
+Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
+Build-Depends: debhelper (>= 9), dh-golang, golang-1.11-go,
+ golang-goprotobuf-dev,
+ golang-github-dnstap-go-dnstap-dev,
+ golang-gopkg-yaml.v2-dev,
+ libnmsg-dev,
+ pkg-config
+Standards-Version: 3.9.8
+Vcs-Git: https://github.com/farsightsec/go-nmsg.git
+Vcs-Browser: https://github.com/farsightsec/go-nmsg
+XS-Go-Import-Path: github.com/farsightsec/go-nmsg
+
+Package: golang-github-farsightsec-go-nmsg-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Pure Golang NMSG Library
+ go-nmsg is a pure go implementation of the NMSG container and payload
+ format used by the C nmsg toolkit and library. It does not implement
+ the full functionality of the C libnmsg message modules.
+ .
+ The NMSG network message encapsulation library format is an efficient
+ encoding of typed, structured data into payloads which are packed into
+ containers which can be transmitted over the network or stored to disk.
+
+Package: golang-github-farsightsec-go-nmsg-base-dev
+Architecture: any
+Depends: golang-github-farsightsec-go-nmsg-dev (= ${binary:Version}),
+ ${shlibs:Depends}, ${misc:Depends}
+Description: NMSG vendor base encoding modules for Golang
+ This package provides generated Go code from Protocol Buffers Version 2
+ specifications for NMSG vendor base encoding modules: Dns, DnsQR, Email,
+ Encode, Http, IPConn, Linkpair, LogLine, Ncap, Packet, Pkt, and Xml.
+
+Package: golang-github-farsightsec-go-nmsg-cgo-nmsg-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ pkg-config,
+ libnmsg-dev,
+ libxs-dev
+Description: Golang bindings to the C libnmsg library
+ The NMSG network message encapsulation library format is an efficient
+ encoding of typed, structured data into payloads which are packed into
+ containers which can be transmitted over the network or stored to disk.

@@ -1,0 +1,12 @@
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/container.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/endian.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/input_frag.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/input.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/input_seq.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/nmsg.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/nmsg.pb.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/output.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/payload.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/register.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/sockspec.go
+usr/share/gocode/src/github.com/farsightsec/go-nmsg/zbuf.go

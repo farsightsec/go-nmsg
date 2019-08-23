@@ -1,0 +1,7 @@
+syntax = "proto2";
+package nmsg.base;
+
+message Pkt {
+    required bytes          payload = 1;
+    optional uint32         len_frame = 2;
+}
