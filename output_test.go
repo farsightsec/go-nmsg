@@ -13,6 +13,7 @@ import (
 	"errors"
 	"testing"
 	"time"
+	"math/rand"
 
 	"github.com/farsightsec/go-nmsg"
 )
@@ -116,6 +117,48 @@ func TestBufferedOutput(t *testing.T) {
 	if c.Count() > 4 {
 		t.Error("Extra writes")
 	}
+}
+
+// this will create a partly-random message of which a portion can be easily compressed
+func testMessageRand(length int) nmsg.Message {
+	b := make([]byte, length)
+	rand.Read(b)
+
+	for i := 0; i < length / 2; i++ {
+		b[i] = 0x41
+	}
+
+	return &testMsg{Bytes: b}
+}
+
+func testPayloadRand(length int) *nmsg.NmsgPayload {
+        p, err := nmsg.Payload(testMessageRand(length))
+        if err != nil {
+                return nil
+        }
+        return p
+}
+
+func TestBufferedOutputCompressed(t *testing.T) {
+	c := newCountWriter(t)
+	o := nmsg.BufferedOutput(c)
+	o.SetMaxSize(1024, 0)
+	o.SetSequenced(true)
+	o.SetCompression(true)
+	o.SetCompressionRatio(2)
+
+	// With compression, this should fit in less than 3 containers
+	if err := o.Send(testPayloadRand(2400)); err != nil {
+		t.Errorf(err.Error())
+	}
+	if err := o.Close(); err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if (c.Count() != 2) {
+		t.Errorf("compressed fragmented output produced count of %v; should be 2", c.Count())
+	}
+
 }
 
 func TestBufferedOutputNoConfig(t *testing.T) {

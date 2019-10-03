@@ -43,7 +43,21 @@ func init() {
 }
 
 func TestRegister(t *testing.T) {
-	msg, err := nmsg.NewMessage(10, 20)
+	msg, err := nmsg.NewMessage(10000, 20)
+	if err == nil {
+		t.Error("expected new message with invalid vendor ID to generate error")
+	} else if err.Error() == "" {
+		t.Error("expected new message with invalid vendor ID to produce error string")
+	}
+
+	msg, err = nmsg.NewMessage(10, 20000)
+	if err == nil {
+		t.Error("expected new message with invalid msgtype to generate error")
+	} else if err.Error() == "" {
+		t.Error("expected new message with invalid msgtype to produce error string")
+	}
+
+	msg, err = nmsg.NewMessage(10, 20)
 	if err != nil {
 		t.Error(err)
 	}
