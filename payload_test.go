@@ -12,11 +12,10 @@ import (
 	"testing"
 
 	"github.com/farsightsec/go-nmsg"
-	"github.com/golang/protobuf/proto"
 )
 
 func testMessage(length int) nmsg.Message {
-	return &testMsg{Bytes: make([]byte, length)}
+	return &TestMessage{Bytes: make([]byte, length)}
 }
 
 func testPayload(length int) *nmsg.NmsgPayload {
@@ -27,19 +26,11 @@ func testPayload(length int) *nmsg.NmsgPayload {
 	return p
 }
 
-type testMsg struct {
-	Bytes []byte `protobuf:"bytes,2,opt,name=bytes"`
-}
-
-func (t *testMsg) GetVid() uint32     { return 10 }
-func (t *testMsg) GetMsgtype() uint32 { return 20 }
-
-func (t *testMsg) Reset()         { *t = testMsg{} }
-func (t *testMsg) String() string { return proto.CompactTextString(t) }
-func (t *testMsg) ProtoMessage()  {}
+func (t *TestMessage) GetVid() uint32     { return 10 }
+func (t *TestMessage) GetMsgtype() uint32 { return 20 }
 
 func init() {
-	nmsg.Register(&testMsg{})
+	nmsg.Register(&TestMessage{})
 }
 
 func TestRegister(t *testing.T) {
@@ -47,7 +38,7 @@ func TestRegister(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if _, ok := msg.(*testMsg); !ok {
+	if _, ok := msg.(*TestMessage); !ok {
 		t.Errorf("NewMessage returned wrong type")
 	}
 }
@@ -63,7 +54,7 @@ func TestPayload(t *testing.T) {
 		t.Error(err)
 	}
 
-	if tp, ok := m.(*testMsg); !ok {
+	if tp, ok := m.(*TestMessage); !ok {
 		t.Errorf("Wrong type from payload")
 	} else if len(tp.Bytes) != 1000 {
 		t.Error("decode failed")

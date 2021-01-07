@@ -1,0 +1,7 @@
+syntax = "proto2";
+package nmsg_test;
+option go_package = "github.com/farsightsec/go-nmsg;nmsg_test";
+
+message TestMessage {
+	optional bytes bytes = 2;
+}
