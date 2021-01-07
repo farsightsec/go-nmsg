@@ -38,11 +38,11 @@ func TestZlib(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	mi, ok := mm.(*testMsg)
+	mi, ok := mm.(*TestMessage)
 	if !ok {
 		t.Error("received message of wrong type")
 	}
-	if len(mi.Bytes) != len(m.(*testMsg).Bytes) {
+	if len(mi.Bytes) != len(m.(*TestMessage).Bytes) {
 		t.Error("received message of wrong length")
 	}
 	for i := range mi.Bytes {
