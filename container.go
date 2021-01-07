@@ -29,15 +29,8 @@ const (
 var (
 	nmsgMagic                = [4]byte{'N', 'M', 'S', 'G'}
 	errBadMagic              = errors.New("Bad NMSG Magic Number")
-	u32max            uint32 = (1 << 31)
 	containerOverhead        = 10
-	fragmentOverhead         = 10 + 4 + proto.Size(
-		&NmsgFragment{
-			Id:      &u32max,
-			Current: &u32max,
-			Last:    &u32max,
-			Crc:     &u32max,
-		})
+	fragmentOverhead	 = 10 + 4 + 24
 )
 
 type containerHeader struct {
