@@ -1,5 +1,6 @@
 syntax = "proto2";
 package nmsg;
+option go_package = "github.com/farsightsec/go-nmsg;nmsg";
 
 message Nmsg {
     repeated NmsgPayload    payloads = 1;
