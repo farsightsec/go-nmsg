@@ -12,7 +12,7 @@ import (
 	"encoding/binary"
 	"time"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Payload encapsulates an nmsg message in a NmsgPayload, suitable for sending to

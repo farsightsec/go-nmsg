@@ -11,7 +11,7 @@ package nmsg_base
 import (
 	"github.com/dnstap/golang-dnstap"
 	"github.com/farsightsec/go-nmsg"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 func (p *Ncap) GetVid() uint32     { return 1 }

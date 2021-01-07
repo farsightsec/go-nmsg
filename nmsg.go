@@ -13,7 +13,7 @@ package nmsg
 import (
 	"hash/crc32"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Container size limits to avoid silly fragmentation and memory

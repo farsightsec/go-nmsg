@@ -16,7 +16,7 @@ import (
 	"io"
 	"math/rand"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
