@@ -2,12 +2,12 @@ syntax = "proto2";
 package nmsg.base;
 option go_package = "github.com/farsightsec/go-nmsg/nmsg_base;nmsg_base";
 
-enum Linktype {
-    anchor = 0;
-    redirect = 1;
-}
 
 message Linkpair {
+    enum Linktype {
+        anchor = 0;
+        redirect = 1;
+    }
     required Linktype   type = 1;
     required bytes      src = 2;
     required bytes      dst = 3;
