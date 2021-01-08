@@ -2,12 +2,12 @@ syntax = "proto2";
 package nmsg.base;
 option go_package = "github.com/farsightsec/go-nmsg/nmsg_base;nmsg_base";
 
-enum HttpType {
-    // unknown = 0;
-    sinkhole = 1;
-}
-
 message Http {
+    enum HttpType {
+        unknown = 0;
+        sinkhole = 1;
+    }
+
     required HttpType   type = 1;
     optional bytes      srcip = 2;
     optional bytes      srchost = 3;
