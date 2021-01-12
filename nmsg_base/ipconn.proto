@@ -1,6 +1,6 @@
 syntax = "proto2";
 package nmsg.base;
-option go_package = "github.com/farsightsec/go-nmsg/nmsg_base;nmsg_base";
+option go_package = "github.com/farsightsec/go-nmsg/nmsg_base";
 
 message IPConn {
     optional uint32     proto = 1;

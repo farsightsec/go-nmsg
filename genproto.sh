@@ -27,7 +27,7 @@ protoc --go_out=../../.. nmsg.proto
 
 cd nmsg_base
 for f in *.proto; do
-	go_package $f "github.com/farsightsec/go-nmsg/nmsg_base;nmsg_base"
+	go_package $f "github.com/farsightsec/go-nmsg/nmsg_base"
 done
 
 protoc --go_out=../../../.. *.proto
