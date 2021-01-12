@@ -1,14 +1,16 @@
 #!/bin/sh
 
 go_package() {
-	local file pkg
+	local file pkg cleanup
 	file=$1; shift
 	pkg=$1; shift
 
 	grep "^option go_package = \"$pkg\";$" $file > /dev/null && return
+	if grep "^option go_package" $file > /dev/null; then
+		cleanup=$(echo "/^option go_package/d:1" | tr : '\n')
+	fi
 	ed $file <<EOF || exit
-/^option go_package/d
-/^package nmsg/
+$cleanup/^package nmsg/
 a
 option go_package = "$pkg";
 .
