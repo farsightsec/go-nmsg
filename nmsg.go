@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-//go:generate protoc --go_out=. nmsg.proto
+//go:generate ./genproto.sh
 
 package nmsg
 
