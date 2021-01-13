@@ -1,22 +1,18 @@
 #!/bin/sh
 
 go_package() {
-	local file pkg cleanup
+	local file pkg line script
 	file=$1; shift
 	pkg=$1; shift
 
-	grep "^option go_package = \"$pkg\";$" $file > /dev/null && return
+	line="option go_package = \"$pkg\";"
+	grep "^$line\$" $file > /dev/null && return
+
+	script="/^package nmsg/|a|$line|.|w|q|"
 	if grep "^option go_package" $file > /dev/null; then
-		cleanup=$(echo "/^option go_package/d:1" | tr : '\n')
+		script="/^option go_package/d|1|${script}"
 	fi
-	ed $file <<EOF || exit
-$cleanup/^package nmsg/
-a
-option go_package = "$pkg";
-.
-w
-q
-EOF
+	echo "$script" | tr '|' '\n' | ed $file || exit
 }
 
 dir=$(dirname $0)
