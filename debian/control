@@ -3,7 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
 Build-Depends: debhelper (>= 9), dh-golang, golang-1.11-go,
- golang-goprotobuf-dev,
+ golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
  golang-gopkg-yaml.v2-dev,
  libnmsg-dev,
