@@ -41,7 +41,7 @@ and library.
 
 `go-nmsg` requires the following open source libraries:
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 	"github.com/dnstap/golang-dnstap"
 
 ## Limitations
