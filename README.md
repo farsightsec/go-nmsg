@@ -1,7 +1,7 @@
 # Pure Golang NMSG Library
 
 `go-nmsg` is a pure go implementation of the NMSG container and payload
-format used by the C (nmsg)[https://github.com/farsightsec/nmsg] toolkit
+format used by the C [nmsg](https://github.com/farsightsec/nmsg) toolkit
 and library.
 
 ## Synopsis
