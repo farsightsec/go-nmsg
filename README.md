@@ -17,7 +17,7 @@ and library.
 	output.SetMaxSize(nmsg.MaxContainerSize, 0)
 
 	for {
-		payload, err := inp.Recv()
+		payload, err := input.Recv()
 		if err != nil {
 			if nmsg.IsDataError(err) {
 				continue
