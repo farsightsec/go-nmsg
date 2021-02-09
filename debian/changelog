@@ -1,3 +1,9 @@
+go-nmsg (0.2.0-1) debian-fsi; urgency=medium
+
+  * Update to use new protobuf library from google.golang.org/protobuf/proto
+
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Mon, 08 Feb 2021 11:15:57 -0500
+
 go-nmsg (0.1.1-1) debian-farsightsec; urgency=medium
 
   * Initial public release.
