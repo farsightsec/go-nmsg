@@ -2,7 +2,10 @@ Source: go-nmsg
 Section: net
 Priority: optional
 Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
-Build-Depends: debhelper (>= 9), dh-golang, golang-1.11-go,
+Build-Depends:
+ debhelper (>= 9),
+ dh-golang,
+ golang-1.18-go,
  golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
  golang-gopkg-yaml.v2-dev,
