@@ -9,7 +9,7 @@ Build-Depends:
  golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
  golang-gopkg-yaml.v2-dev,
- libnmsg-dev,
+ libnmsg-dev (>= 1.0.0~),
  pkg-config
 Standards-Version: 3.9.8
 Vcs-Git: https://github.com/farsightsec/go-nmsg.git
