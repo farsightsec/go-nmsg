@@ -1,3 +1,9 @@
+go-nmsg (0.2.0-2) debian-fsi; urgency=medium
+
+  * Update Debian golang build.
+
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Tue, 20 Dec 2022 20:04:42 +0000
+
 go-nmsg (0.2.0-1) debian-fsi; urgency=medium
 
   * Update to use new protobuf library from google.golang.org/protobuf/proto
