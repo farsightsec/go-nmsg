@@ -64,6 +64,9 @@ func (d *Dnstap) Unmarshal(b []byte) error {
 	return proto.Unmarshal(b, &d.Dnstap)
 }
 
+func (d *DnsObs) GetVid() uint32     { return 1 }
+func (d *DnsObs) GetMsgtype() uint32 { return 14 }
+
 func init() {
 	nmsg.Register(&Ncap{})
 	nmsg.Register(&Email{})
@@ -78,4 +81,5 @@ func init() {
 	nmsg.Register(&Encode{})
 	nmsg.Register(&Packet{})
 	nmsg.Register(&Dnstap{})
+	nmsg.Register(&DnsObs{})
 }
