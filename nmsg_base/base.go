@@ -68,6 +68,7 @@ func (d *DnsObs) GetVid() uint32     { return 1 }
 func (d *DnsObs) GetMsgtype() uint32 { return 14 }
 
 func init() {
+	nmsg.RegisterVendor("base", 1)
 	nmsg.Register(&Ncap{})
 	nmsg.Register(&Email{})
 	nmsg.Register(&Linkpair{})
