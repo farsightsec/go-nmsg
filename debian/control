@@ -3,14 +3,13 @@ Section: net
 Priority: optional
 Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
 Build-Depends:
- debhelper (>= 13),
  debhelper-compat (= 13),
  dh-golang,
  golang-any,
  golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
  golang-gopkg-yaml.v2-dev,
- libnmsg-dev,
+ libnmsg-dev (>= 1.1.0~),
  pkg-config,
 Standards-Version: 4.5.1
 Vcs-Git: https://github.com/farsightsec/go-nmsg.git
