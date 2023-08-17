@@ -1,4 +1,4 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --builddirectory=_build --buildsystem=golang
+	dh $@ --with=golang --builddirectory=_build --buildsystem=golang
