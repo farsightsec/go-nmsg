@@ -325,6 +325,30 @@ func TestTimedBufferedOutputTimedError(t *testing.T) {
 	}
 }
 
+func TestNotFragmented(t *testing.T) {
+	cw := newCountWriter(t)
+	o := nmsg.BufferedOutput(cw)
+	o.SetSequenced(true)
+	o.SetMaxSize(2000,1500)
+
+	// Send two packages to fill container
+	// If sequence size is not accounted then both
+	// of them shall fit into one container
+	if err := o.Send(testPayload(960)); err != nil {
+		t.Error(err)
+	}
+
+	if err := o.Send(testPayload(970)); err != nil {
+		t.Error(err)
+	}
+
+	if cw.Count() < 1 {
+		t.Error("Fragmented")
+	}
+
+	o.Close()
+}
+
 type nullwriter struct{}
 
 func (n nullwriter) Write(b []byte) (int, error) { return len(b), nil }
