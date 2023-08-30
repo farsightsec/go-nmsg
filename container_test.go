@@ -16,8 +16,8 @@ import (
 	"log"
 	"testing"
 
-	cnmsg "github.com/farsightsec/go-nmsg/cgo-nmsg"
 	"github.com/farsightsec/go-nmsg"
+	cnmsg "github.com/farsightsec/go-nmsg/cgo-nmsg"
 	"github.com/farsightsec/go-nmsg/nmsg_base"
 )
 

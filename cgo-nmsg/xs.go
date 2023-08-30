@@ -1,3 +1,4 @@
+//go:build libxs
 // +build libxs
 
 /*
