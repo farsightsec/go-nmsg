@@ -139,6 +139,13 @@ func (c *Container) SetSequenced(sequenced bool) {
 // Both ok and full may be true if the payload is larger than the container's
 // MaxSize, or if the container is full after adding the payload.
 func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
+
+	seqSize := 0
+
+	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
+		seqSize = 18 // 6 + 12 bytes for protobuf-encoded sequence and sequenceId values
+	}
+
 	limit := c.maxSize
 	if c.compress {
 		if c.compressionRatio > 0 {
@@ -149,15 +156,11 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 	}
 	ps := p.payloadSize()
 
-	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
-		ps += 18 // 6 + 12 bytes for protobuf-encoded sequence and sequenceId values
-	}
-
-	if c.size+ps >= limit {
+	if c.size+ps+seqSize >= limit {
 		full = true
 	}
 
-	if !full || c.size == containerOverhead || c.size+ps == limit {
+	if !full || c.size == containerOverhead || c.size+ps+seqSize == limit {
 		ok = true
 		c.size += ps
 		c.Nmsg.Payloads = append(c.Nmsg.Payloads, p)
