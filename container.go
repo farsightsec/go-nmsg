@@ -27,10 +27,10 @@ const (
 )
 
 var (
-	nmsgMagic         = [4]byte{'N', 'M', 'S', 'G'}
-	errBadMagic       = errors.New("Bad NMSG Magic Number")
-	containerOverhead = 10
-	fragmentOverhead  = 10 + 4 + 24
+	nmsgMagic                = [4]byte{'N', 'M', 'S', 'G'}
+	errBadMagic              = errors.New("Bad NMSG Magic Number")
+	containerOverhead        = 10
+	fragmentOverhead	 = 10 + 4 + 24
 )
 
 type containerHeader struct {
