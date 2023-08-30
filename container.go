@@ -13,11 +13,9 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"google.golang.org/protobuf/proto"
 	"io"
 	"math/rand"
-	"reflect"
-
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -151,8 +149,7 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 	ps := p.payloadSize()
 
 	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
-		var tmp uint64
-		ps += 2 * int(reflect.TypeOf(tmp).Size())
+		ps += 16 // 2 * sizeof uint64
 	}
 
 	if c.size+ps >= limit {
