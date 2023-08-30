@@ -149,7 +149,7 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 	ps := p.payloadSize()
 
 	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
-		ps += 16 // 2 * sizeof uint64
+		ps += 18 // 6 + 12 protobuf seqence and sequenceId fields
 	}
 
 	if c.size+ps >= limit {
