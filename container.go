@@ -13,9 +13,10 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"google.golang.org/protobuf/proto"
 	"io"
 	"math/rand"
+
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -149,7 +150,7 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 	ps := p.payloadSize()
 
 	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
-		ps += 18 // 6 + 12 protobuf seqence and sequenceId fields
+		ps += 18 // 6 + 12 bytes for protobuf-encoded sequence and sequenceId values
 	}
 
 	if c.size+ps >= limit {
