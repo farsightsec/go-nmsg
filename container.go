@@ -156,16 +156,15 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 	}
 	ps := p.payloadSize()
 
-	if c.size+ps+seqSize >= limit {
+	if c.size+ps+seqSize > limit {
 		full = true
+		return
 	}
 
-	if !full || c.size == containerOverhead || c.size+ps+seqSize == limit {
-		ok = true
-		c.size += ps
-		c.Nmsg.Payloads = append(c.Nmsg.Payloads, p)
-		c.Nmsg.PayloadCrcs = append(c.Nmsg.PayloadCrcs, nmsgCRC(p.Payload))
-	}
+	ok = true
+	c.size += ps
+	c.Nmsg.Payloads = append(c.Nmsg.Payloads, p)
+	c.Nmsg.PayloadCrcs = append(c.Nmsg.PayloadCrcs, nmsgCRC(p.Payload))
 
 	return
 }
