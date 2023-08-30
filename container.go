@@ -209,7 +209,6 @@ func (c *Container) WriteTo(w io.Writer) (int64, error) {
 	c.size = containerOverhead
 
 	if len(b)+containerOverhead > c.writeSize {
-		fmt.Println("Fragmented")
 		return c.writeFragments(w, b)
 	}
 
