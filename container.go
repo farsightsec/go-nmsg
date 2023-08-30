@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"reflect"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -27,10 +28,10 @@ const (
 )
 
 var (
-	nmsgMagic                = [4]byte{'N', 'M', 'S', 'G'}
-	errBadMagic              = errors.New("Bad NMSG Magic Number")
-	containerOverhead        = 10
-	fragmentOverhead	 = 10 + 4 + 24
+	nmsgMagic         = [4]byte{'N', 'M', 'S', 'G'}
+	errBadMagic       = errors.New("Bad NMSG Magic Number")
+	containerOverhead = 10
+	fragmentOverhead  = 10 + 4 + 24
 )
 
 type containerHeader struct {
@@ -148,6 +149,12 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 		}
 	}
 	ps := p.payloadSize()
+
+	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
+		var tmp uint64
+		ps += 2 * int(reflect.TypeOf(tmp).Size())
+	}
+
 	if c.size+ps >= limit {
 		full = true
 	}
@@ -202,6 +209,7 @@ func (c *Container) WriteTo(w io.Writer) (int64, error) {
 	c.size = containerOverhead
 
 	if len(b)+containerOverhead > c.writeSize {
+		fmt.Println("Fragmented")
 		return c.writeFragments(w, b)
 	}
 
