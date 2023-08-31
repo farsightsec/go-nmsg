@@ -325,7 +325,7 @@ func TestTimedBufferedOutputTimedError(t *testing.T) {
 	}
 }
 
-func TestNotFragmented(t *testing.T) {
+func TestSequencedContainerSize(t *testing.T) {
 	cw := newCountWriter(t)
 	o := nmsg.BufferedOutput(cw)
 	o.SetSequenced(true)
