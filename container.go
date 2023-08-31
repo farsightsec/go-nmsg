@@ -158,7 +158,9 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 
 	if c.size+ps+seqSize > limit {
 		full = true
-		return
+		if c.size != containerOverhead {
+			return
+		}
 	}
 
 	ok = true
