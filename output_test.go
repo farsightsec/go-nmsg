@@ -331,9 +331,9 @@ func TestSequencedContainerSize(t *testing.T) {
 	o.SetSequenced(true)
 	o.SetMaxSize(2000,2000)
 
-	// Send two packages to fill container
+	// Send two packages to fill container 960+970+protobuf data+sequence size=2016 bytes
 	// If sequence size is not accounted then both
-	// of them shall fit into one container
+	// of them shall fit into one container for a size of 2000
 	if err := o.Send(testPayload(960)); err != nil {
 		t.Error(err)
 	}
@@ -343,7 +343,7 @@ func TestSequencedContainerSize(t *testing.T) {
 	}
 
 	if cw.Count() != 1 {
-		t.Error("Fragmented")
+		t.Error("Sequence size is not accounted for")
 	}
 
 	o.Close()
