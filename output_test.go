@@ -329,7 +329,7 @@ func TestNotFragmented(t *testing.T) {
 	cw := newCountWriter(t)
 	o := nmsg.BufferedOutput(cw)
 	o.SetSequenced(true)
-	o.SetMaxSize(2000,1500)
+	o.SetMaxSize(2000,2000)
 
 	// Send two packages to fill container
 	// If sequence size is not accounted then both
@@ -342,7 +342,7 @@ func TestNotFragmented(t *testing.T) {
 		t.Error(err)
 	}
 
-	if cw.Count() < 1 {
+	if cw.Count() != 1 {
 		t.Error("Fragmented")
 	}
 
