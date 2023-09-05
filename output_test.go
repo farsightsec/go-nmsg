@@ -325,6 +325,52 @@ func TestTimedBufferedOutputTimedError(t *testing.T) {
 	}
 }
 
+func TestSequencedContainerSize(t *testing.T) {
+	cw := newCountWriter(t)
+	o := nmsg.BufferedOutput(cw)
+	o.SetSequenced(false)
+	o.SetMaxSize(2000, 2000)
+
+	// When serialized, these two payloads produce an nmsg container of
+	// exactly 2000 bytes, with an additional 16 bytes packed into the
+	// container IF sequencing is enabled.
+	if err := o.Send(testPayload(960)); err != nil {
+		t.Error(err)
+	}
+
+	if err := o.Send(testPayload(970)); err != nil {
+		t.Error(err)
+	}
+
+	o.Close() // Flush for proper count
+
+	// Without the overhead of sequencing, we expect a single container.
+	if cw.Count() != 1 {
+		t.Error("Unsequenced container expected size calculation failed")
+	}
+
+	// Try the exact same thing but with sequencing enabled.
+	cw = newCountWriter(t)
+	o = nmsg.BufferedOutput(cw)
+	o.SetSequenced(true)
+	o.SetMaxSize(2000, 2000)
+
+	if err := o.Send(testPayload(960)); err != nil {
+		t.Error(err)
+	}
+
+	if err := o.Send(testPayload(970)); err != nil {
+		t.Error(err)
+	}
+
+	o.Close()
+
+	// WITH the overhead of sequencing, we overflow into a second container.
+	if cw.Count() != 2 {
+		t.Error("Sequenced container expected size calculation failed")
+	}
+}
+
 type nullwriter struct{}
 
 func (n nullwriter) Write(b []byte) (int, error) { return len(b), nil }

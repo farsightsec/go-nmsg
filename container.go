@@ -27,10 +27,10 @@ const (
 )
 
 var (
-	nmsgMagic                = [4]byte{'N', 'M', 'S', 'G'}
-	errBadMagic              = errors.New("Bad NMSG Magic Number")
-	containerOverhead        = 10
-	fragmentOverhead	 = 10 + 4 + 24
+	nmsgMagic         = [4]byte{'N', 'M', 'S', 'G'}
+	errBadMagic       = errors.New("Bad NMSG Magic Number")
+	containerOverhead = 10
+	fragmentOverhead  = 10 + 4 + 24
 )
 
 type containerHeader struct {
@@ -139,6 +139,13 @@ func (c *Container) SetSequenced(sequenced bool) {
 // Both ok and full may be true if the payload is larger than the container's
 // MaxSize, or if the container is full after adding the payload.
 func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
+
+	seqSize := 0
+
+	if c.Nmsg.Sequence != nil && c.Nmsg.SequenceId != nil {
+		seqSize = 18 // 6 + 12 bytes for protobuf-encoded sequence and sequenceId values
+	}
+
 	limit := c.maxSize
 	if c.compress {
 		if c.compressionRatio > 0 {
@@ -148,16 +155,18 @@ func (c *Container) AddPayload(p *NmsgPayload) (ok, full bool) {
 		}
 	}
 	ps := p.payloadSize()
-	if c.size+ps >= limit {
+
+	if c.size+ps+seqSize > limit {
 		full = true
+		if c.size != containerOverhead {
+			return
+		}
 	}
 
-	if !full || c.size == containerOverhead || c.size+ps == limit {
-		ok = true
-		c.size += ps
-		c.Nmsg.Payloads = append(c.Nmsg.Payloads, p)
-		c.Nmsg.PayloadCrcs = append(c.Nmsg.PayloadCrcs, nmsgCRC(p.Payload))
-	}
+	ok = true
+	c.size += ps
+	c.Nmsg.Payloads = append(c.Nmsg.Payloads, p)
+	c.Nmsg.PayloadCrcs = append(c.Nmsg.PayloadCrcs, nmsgCRC(p.Payload))
 
 	return
 }
