@@ -331,7 +331,7 @@ func TestSequencedContainerSize(t *testing.T) {
 	o.SetSequenced(true)
 	o.SetMaxSize(2000,2000)
 
-	// Send two packages to fill container 960+970+protobuf data+sequence size=2016 bytes
+	// Send two payloads to fill container 960+970+protobuf data+sequence size=2016 bytes
 	// If sequence size is not accounted then both
 	// of them shall fit into one container for a size of 2000
 	if err := o.Send(testPayload(960)); err != nil {
