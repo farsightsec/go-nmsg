@@ -98,23 +98,31 @@ func zmq_socket_type(kind SocketKind, socketType SocketType) zmq.Type {
 	return zmq.Type(-1)
 }
 
-func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, error) {
+func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, string, error) {
 	endpoint, socketDir, socketType, err := munge_endpoint(ep)
 
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if endpoint == "" {
-		return nil, errors.New("end point is not set")
+		return nil, "", errors.New("end point is not set")
 	}
 
 	if socketDir == SockdirInvalid {
-		return nil, errors.New("socket direction is not set")
+		return nil, "", errors.New("socket direction is not set")
 	}
 
 	if socketType == SocktypeInvalid {
-		return nil, errors.New("socket type is not set")
+		return nil, "", errors.New("socket type is not set")
+	}
+
+	if socketType == SocktypePubsub {
+		if kind == SocketInput && socketDir == SockdirAccept {
+			return nil, "", errors.New("subscriber socket must connect")
+		} else if kind == SocketOutput && socketDir == SockdirConnect {
+			return nil, "", errors.New("publisher socket must accept")
+		}
 	}
 
 	zmq_type := zmq_socket_type(kind, socketType)
@@ -122,27 +130,27 @@ func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, error) {
 	socket, err := zmq.NewSocket(zmq_type)
 
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	err = setSocketOptions(socket, zmq_type)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if socketDir == SockdirAccept {
 		err = socket.Bind(endpoint)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 	} else if socketDir == SockdirConnect {
 		err = socket.Connect(endpoint)
 		if err != nil {
-			return nil, err
+			return nil, "", err
 		}
 	}
 
-	return socket, nil
+	return socket, endpoint, nil
 }
 
 func Version() string {
@@ -152,6 +160,7 @@ func Version() string {
 
 type zmq_io struct {
 	sock *zmq.Socket
+	ep   string
 }
 
 func (i *zmq_io) Read(p []byte) (n int, err error) {
@@ -171,14 +180,18 @@ func (o *zmq_io) Close() error {
 	return o.sock.Close()
 }
 
+func (o *zmq_io) Unbind() error {
+	return o.sock.Unbind(o.ep)
+}
+
 func zmqIO(ep string, kind SocketKind) (*zmq_io, error) {
-	socket, err := zmq_socket(ep, kind)
+	socket, endpoint, err := zmq_socket(ep, kind)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &zmq_io{sock: socket}, nil
+	return &zmq_io{sock: socket, ep: endpoint}, nil
 }
 
 func ZMQWriter(ep string) (io.Writer, error) {
