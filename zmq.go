@@ -194,10 +194,10 @@ func zmqIO(ep string, kind SocketKind) (*zmq_io, error) {
 	return &zmq_io{sock: socket, ep: endpoint}, nil
 }
 
-func ZMQWriter(ep string) (io.Writer, error) {
+func NewZMQWriter(ep string) (io.Writer, error) {
 	return zmqIO(ep, SocketOutput)
 }
 
-func ZMQReader(ep string) (io.Reader, error) {
+func NewZMQReader(ep string) (io.Reader, error) {
 	return zmqIO(ep, SocketInput)
 }
