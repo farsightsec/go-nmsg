@@ -2,7 +2,7 @@ package nmsg_test
 
 import (
 	"errors"
-	nmsg "github.com/farsightsec/go-nmsg"
+	"github.com/farsightsec/go-nmsg"
 	cnmsg "github.com/farsightsec/go-nmsg/cgo-nmsg"
 	"io"
 	"log"
@@ -64,13 +64,13 @@ func getCgoMessage(t *testing.T, size int) *cnmsg.Message {
 	return msg
 }
 
-func doWriteCgo(t * testing.T, s chan bool, o cnmsg.Output) error {
+func doWriteCgo(t *testing.T, s chan bool, o cnmsg.Output) error {
 	for {
 		select {
 		case _ = <-s:
 			return nil
 		default:
-			msg := getCgoMessage(t, 1000)
+			msg := getCgoMessage(t, 500)
 			err := o.Write(msg)
 			if err != nil {
 				return err
@@ -158,7 +158,6 @@ func doTestDo(t *testing.T, i nmsg.Input, o nmsg.Output) {
 }
 
 func doTestCgoDo(t *testing.T, i cnmsg.Input, o cnmsg.Output) {
-
 	signal := make(chan bool)
 
 	go func() {
@@ -174,21 +173,21 @@ func doTestCgoDo(t *testing.T, i cnmsg.Input, o cnmsg.Output) {
 		t.Fatal(err.Error())
 	}
 
-	msg_ref := getCgoMessage(t, 1000)
+	msg_ref := getCgoMessage(t, 500)
 	if MessageIsEqual(rmsg, msg_ref) == false {
 		log.Fatal("messages do not match")
 	}
 }
 
 func doTestUnbuffered(t *testing.T, r io.Reader, w io.Writer) {
-	input := nmsg.NewInput(r, 2000)
+	input := nmsg.NewInput(r, 1000)
 	output := nmsg.UnbufferedOutput(w)
 
 	doTestDo(t, input, output)
 }
 
 func doTestBuffered(t *testing.T, r io.Reader, w io.Writer) {
-	input := nmsg.NewInput(r, 2000)
+	input := nmsg.NewInput(r, 1000)
 	output := nmsg.BufferedOutput(w)
 
 	doTestDo(t, input, output)
@@ -212,7 +211,6 @@ func doTestFor(t *testing.T, ep string, tp string, fn tester) {
 	fn(t, reader, writer)
 }
 
-
 func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
 	writer, err := cnmsg.NewZMQOutput(ep+",accept,"+tp, 2000)
 
@@ -230,7 +228,6 @@ func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
 
 	fn(t, reader, writer)
 }
-
 
 func doTestMixedDo(t *testing.T, ci cnmsg.Input, co cnmsg.Output, ni nmsg.Input, no nmsg.Output) {
 	// Write to co, read for ni, write to no, read from ci
@@ -258,7 +255,7 @@ func doTestMixedDo(t *testing.T, ci cnmsg.Input, co cnmsg.Output, ni nmsg.Input,
 		log.Fatal(err.Error())
 	}
 
-	msg_ref := getCgoMessage(t, 1000)
+	msg_ref := getCgoMessage(t, 500)
 
 	if MessageIsEqual(rmsg, msg_ref) == false {
 		log.Fatal("messages do not match")
@@ -269,7 +266,7 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 	ep1 := ep + strconv.Itoa(num)
 	ep2 := ep + strconv.Itoa(num+1)
 
-	co, err := cnmsg.NewZMQOutput(ep1+",accept,"+tp, 2000)
+	co, err := cnmsg.NewZMQOutput(ep1+",accept,"+tp, 1000)
 
 	if err != nil {
 		t.Error(err.Error() + " " + ep1)
@@ -295,7 +292,7 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 		return
 	}
 
-	ni := nmsg.NewInput(nr, 2000)
+	ni := nmsg.NewInput(nr, 1000)
 	no := nmsg.UnbufferedOutput(nw)
 
 	fn(t, ci, co, ni, no)
@@ -322,33 +319,33 @@ func TestZMQIpc(t *testing.T) {
 	doTestFor(t, "ipc:///tmp/TestZMQIpc2", "pubsub", doTestBuffered)
 }
 
-//func TestZMQ_CGo_Local(t *testing.T) {
-//	doTestForCGo(t, "tcp://127.0.0.1:6555", "pushpull", doTestCgoDo)
-//	doTestForCGo(t, "tcp://127.0.0.1:6557", "pubsub", doTestCgoDo)
-//}
+func TestZMQ_CGo_Local(t *testing.T) {
+	doTestForCGo(t, "tcp://127.0.0.1:6555", "pushpull", doTestCgoDo)
+	doTestForCGo(t, "tcp://127.0.0.1:6557", "pubsub", doTestCgoDo)
+}
 
-//func TestZMQ_CGo_Inproc(t *testing.T) {
-//	doTestForCGo(t, "inproc://TestZMQInproc10", "pushpull", doTestCgoDo)
-//	doTestForCGo(t, "inproc://TestZMQInproc30", "pubsub", doTestCgoDo)
-//}
+func TestZMQ_CGo_Inproc(t *testing.T) {
+	doTestForCGo(t, "inproc://TestZMQInproc10", "pushpull", doTestCgoDo)
+	doTestForCGo(t, "inproc://TestZMQInproc30", "pubsub", doTestCgoDo)
+}
 
-//func TestZMQ_CGo_IPC(t *testing.T) {
-//	doTestForCGo(t, "ipc:///tmp/TestZMQIpc10", "pushpull", doTestCgoDo)
-//	doTestForCGo(t, "ipc:///tmp/TestZMQIpc20", "pubsub", doTestCgoDo)
-//}
+func TestZMQ_CGo_IPC(t *testing.T) {
+	doTestForCGo(t, "ipc:///tmp/TestZMQIpc10", "pushpull", doTestCgoDo)
+	doTestForCGo(t, "ipc:///tmp/TestZMQIpc20", "pubsub", doTestCgoDo)
+}
 
-//func TestZmq_Mixed_Local(t *testing.T) {
-//	doTestForMixed(t, "tcp://127.0.0.1:", 7555, "pushpull", doTestMixedDo)
-//	doTestForMixed(t, "tcp://127.0.0.1:", 7557, "pubsub", doTestMixedDo)
-//}
-//
-// Inproc cgo-nmsg side fill writer buffer and hangs
+func TestZmq_Mixed_Local(t *testing.T) {
+	doTestForMixed(t, "tcp://127.0.0.1:", 7555, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "tcp://127.0.0.1:", 7557, "pubsub", doTestMixedDo)
+}
+
+//// Inproc cgo-nmsg side fill writer buffer and hangs
 //func TestZmq_Mixed_Inproc(t *testing.T) {
 //	doTestForMixed(t, "inproc://TestZMQInproc", 100, "pushpull", doTestMixedDo)
 //	doTestForMixed(t, "inproc://TestZMQInproc", 200, "pubsub", doTestMixedDo)
 //}
-//
-//func TestZmq_Mixed_IPC(t *testing.T) {
-//	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
-//	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
-//}
+
+func TestZmq_Mixed_IPC(t *testing.T) {
+	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
+}
