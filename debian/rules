@@ -1,6 +1,4 @@
 #!/usr/bin/make -f
 
-#export DH_VERBOSE = 1
-
 %:
-	dh $@ --buildsystem=golang --with=golang
+	dh $@ --with=golang --builddirectory=_build --buildsystem=golang

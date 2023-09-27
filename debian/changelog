@@ -1,3 +1,14 @@
+go-nmsg (0.3.0-1) debian-fsi; urgency=medium
+
+  * Add support for dnsobs message type.
+
+  * Add facilities for translating vendor and message type names to and from
+    numeric ids.
+
+  * Fix bug leading to unnecessary fragmentation of NMSG containers.
+
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Wed, 27 Sep 2023 18:07:00 +0000
+
 go-nmsg (0.2.0-2) debian-fsi; urgency=medium
 
   * Update Debian golang build.
