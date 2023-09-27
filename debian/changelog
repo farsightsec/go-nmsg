@@ -5,7 +5,9 @@ go-nmsg (0.3.0-1) debian-fsi; urgency=medium
   * Add facilities for translating vendor and message type names to and from
     numeric ids.
 
- -- Farsight Security, Inc. <software@farsightsecurity.com>  Wed, 16 Aug 2023 22:08:18 +0000
+  * Fix bug leading to unnecessary fragmentation of NMSG containers.
+
+ -- Farsight Security, Inc. <software@farsightsecurity.com>  Wed, 27 Sep 2023 18:07:00 +0000
 
 go-nmsg (0.2.0-2) debian-fsi; urgency=medium
 
