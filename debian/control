@@ -3,14 +3,13 @@ Section: net
 Priority: optional
 Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
 Build-Depends:
- debhelper (>= 13),
  debhelper-compat (= 13),
  dh-golang,
  golang-any,
  golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
  golang-gopkg-yaml.v2-dev,
- libnmsg-dev,
+ libnmsg-dev (>= 1.1.0~),
  pkg-config,
 Standards-Version: 4.5.1
 Vcs-Git: https://github.com/farsightsec/go-nmsg.git
@@ -20,7 +19,7 @@ XS-Go-Import-Path: github.com/farsightsec/go-nmsg
 Package: golang-github-farsightsec-go-nmsg-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- golang-google-protobuf-dev
+ golang-google-protobuf-dev,
 Description: Pure Golang NMSG Library
  go-nmsg is a pure go implementation of the NMSG container and payload
  format used by the C nmsg toolkit and library. It does not implement
@@ -32,8 +31,10 @@ Description: Pure Golang NMSG Library
 
 Package: golang-github-farsightsec-go-nmsg-base-dev
 Architecture: any
-Depends: golang-github-farsightsec-go-nmsg-dev (= ${binary:Version}),
- ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ golang-github-farsightsec-go-nmsg-dev (= ${binary:Version}),
+ golang-github-dnstap-go-dnstap-dev,
+ golang-google-protobuf-dev,
 Description: NMSG vendor base encoding modules for Golang
  This package provides generated Go code from Protocol Buffers Version 2
  specifications for NMSG vendor base encoding modules: Dns, DnsQR, Email,
