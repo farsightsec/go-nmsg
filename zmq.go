@@ -2,35 +2,34 @@ package nmsg
 
 import (
 	"errors"
-	"fmt"
 	zmq "github.com/pebbe/zmq4"
 	"io"
 	"strings"
 )
 
-type SocketKind int
-type SocketDirection int
-type SocketType int
+type socketKind int
+type socketDirection int
+type socketType int
 
 const (
-	SocketInput  SocketKind = 0
-	SocketOutput            = 1
+	socketInput  socketKind = 0
+	socketOutput            = 1
 )
 const (
-	SockdirInvalid SocketDirection = 0
-	SockdirAccept                  = 1
-	SockdirConnect                 = 2
+	sockdirInvalid socketDirection = 0
+	sockdirAccept  = 1
+	sockdirConnect = 2
 )
 
 const (
-	SocktypeInvalid  SocketType = 0
-	SocktypePubsub              = 1
+	SocktypeInvalid socketType = 0
+	SocktypePubsub             = 1
 	SocktypePushpull            = 2
 )
 
-func munge_endpoint(ep string) (string, SocketDirection, SocketType, error) {
+func munge_endpoint(ep string) (string, socketDirection, socketType, error) {
 	endpoint := ""
-	sockdir := SockdirInvalid
+	sockdir := sockdirInvalid
 	socktype := SocktypeInvalid
 
 	tokens := strings.Split(ep, ",")
@@ -40,23 +39,23 @@ func munge_endpoint(ep string) (string, SocketDirection, SocketType, error) {
 		} else {
 			switch tok {
 			case "accept":
-				if sockdir != SockdirInvalid {
-					return "", SockdirInvalid, SocktypeInvalid, errors.New("socket direction is already set")
+				if sockdir != sockdirInvalid {
+					return "", sockdirInvalid, SocktypeInvalid, errors.New("socket direction is already set")
 				}
-				sockdir = SockdirAccept
+				sockdir = sockdirAccept
 			case "connect":
-				if sockdir != SockdirInvalid {
-					return "", SockdirInvalid, SocktypeInvalid, errors.New("socket direction is already set")
+				if sockdir != sockdirInvalid {
+					return "", sockdirInvalid, SocktypeInvalid, errors.New("socket direction is already set")
 				}
-				sockdir = SockdirConnect
+				sockdir = sockdirConnect
 			case "pubsub":
 				if socktype != SocktypeInvalid {
-					return "", SockdirInvalid, SocktypeInvalid, errors.New("socket type is already set")
+					return "", sockdirInvalid, SocktypeInvalid, errors.New("socket type is already set")
 				}
 				socktype = SocktypePubsub
 			case "pushpull":
 				if socktype != SocktypeInvalid {
-					return "", SockdirInvalid, SocktypeInvalid, errors.New("socket type is already set")
+					return "", sockdirInvalid, SocktypeInvalid, errors.New("socket type is already set")
 				}
 				socktype = SocktypePushpull
 			}
@@ -80,14 +79,14 @@ func setSocketOptions(socket *zmq.Socket, p zmq.Type) error {
 	return nil
 }
 
-func zmq_socket_type(kind SocketKind, socketType SocketType) zmq.Type {
-	if kind == SocketInput {
+func zmq_socket_type(kind socketKind, socketType socketType) zmq.Type {
+	if kind == socketInput {
 		if socketType == SocktypePubsub {
 			return zmq.SUB
 		} else if socketType == SocktypePushpull {
 			return zmq.PULL
 		}
-	} else if kind == SocketOutput {
+	} else if kind == socketOutput {
 		if socketType == SocktypePubsub {
 			return zmq.PUB
 		} else if socketType == SocktypePushpull {
@@ -98,7 +97,7 @@ func zmq_socket_type(kind SocketKind, socketType SocketType) zmq.Type {
 	return zmq.Type(-1)
 }
 
-func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, string, error) {
+func zmq_socket(ep string, kind socketKind) (*zmq.Socket, string, error) {
 	endpoint, socketDir, socketType, err := munge_endpoint(ep)
 
 	if err != nil {
@@ -109,20 +108,12 @@ func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, string, error) {
 		return nil, "", errors.New("end point is not set")
 	}
 
-	if socketDir == SockdirInvalid {
+	if socketDir == sockdirInvalid {
 		return nil, "", errors.New("socket direction is not set")
 	}
 
 	if socketType == SocktypeInvalid {
 		return nil, "", errors.New("socket type is not set")
-	}
-
-	if socketType == SocktypePubsub {
-		if kind == SocketInput && socketDir == SockdirAccept {
-			return nil, "", errors.New("subscriber socket must connect")
-		} else if kind == SocketOutput && socketDir == SockdirConnect {
-			return nil, "", errors.New("publisher socket must accept")
-		}
 	}
 
 	zmq_type := zmq_socket_type(kind, socketType)
@@ -138,12 +129,12 @@ func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, string, error) {
 		return nil, "", err
 	}
 
-	if socketDir == SockdirAccept {
+	if socketDir == sockdirAccept {
 		err = socket.Bind(endpoint)
 		if err != nil {
 			return nil, "", err
 		}
-	} else if socketDir == SockdirConnect {
+	} else if socketDir == sockdirConnect {
 		err = socket.Connect(endpoint)
 		if err != nil {
 			return nil, "", err
@@ -151,11 +142,6 @@ func zmq_socket(ep string, kind SocketKind) (*zmq.Socket, string, error) {
 	}
 
 	return socket, endpoint, nil
-}
-
-func Version() string {
-	major, minor, patch := zmq.Version()
-	return fmt.Sprintf("%d.%d.%d", major, minor, patch)
 }
 
 type zmq_io struct {
@@ -184,7 +170,7 @@ func (o *zmq_io) Unbind() error {
 	return o.sock.Unbind(o.ep)
 }
 
-func zmqIO(ep string, kind SocketKind) (*zmq_io, error) {
+func zmqIO(ep string, kind socketKind) (*zmq_io, error) {
 	socket, endpoint, err := zmq_socket(ep, kind)
 
 	if err != nil {
@@ -194,10 +180,10 @@ func zmqIO(ep string, kind SocketKind) (*zmq_io, error) {
 	return &zmq_io{sock: socket, ep: endpoint}, nil
 }
 
-func NewZMQWriter(ep string) (io.Writer, error) {
-	return zmqIO(ep, SocketOutput)
+func NewZMQWriter(ep string) (io.WriteCloser, error) {
+	return zmqIO(ep, socketOutput)
 }
 
-func NewZMQReader(ep string) (io.Reader, error) {
-	return zmqIO(ep, SocketInput)
+func NewZMQReader(ep string) (io.ReadCloser, error) {
+	return zmqIO(ep, socketInput)
 }
