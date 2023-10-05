@@ -17,13 +17,13 @@ const (
 )
 const (
 	sockdirInvalid socketDirection = 0
-	sockdirAccept  = 1
-	sockdirConnect = 2
+	sockdirAccept                  = 1
+	sockdirConnect                 = 2
 )
 
 const (
-	SocktypeInvalid socketType = 0
-	SocktypePubsub             = 1
+	SocktypeInvalid  socketType = 0
+	SocktypePubsub              = 1
 	SocktypePushpull            = 2
 )
 
