@@ -168,6 +168,13 @@ func (o *zmq_io) Write(p []byte) (int, error) {
 }
 
 func (o *zmq_io) Close() error {
+	if o.binded == true {
+		err := o.sock.Unbind(o.ep)
+		if err != nil {
+			return err
+		}
+	}
+
 	return o.sock.Close()
 }
 
