@@ -97,23 +97,25 @@ func zmq_socket_type(kind socketKind, socketType socketType) zmq.Type {
 	return zmq.Type(-1)
 }
 
-func zmq_socket(ep string, kind socketKind) (*zmq.Socket, string, error) {
+func zmq_socket(ep string, kind socketKind) (*zmq_io, error) {
 	endpoint, socketDir, socketType, err := munge_endpoint(ep)
 
+	binded := false
+
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	if endpoint == "" {
-		return nil, "", errors.New("end point is not set")
+		return nil, errors.New("end point is not set")
 	}
 
 	if socketDir == sockdirInvalid {
-		return nil, "", errors.New("socket direction is not set")
+		return nil, errors.New("socket direction is not set")
 	}
 
 	if socketType == SocktypeInvalid {
-		return nil, "", errors.New("socket type is not set")
+		return nil, errors.New("socket type is not set")
 	}
 
 	zmq_type := zmq_socket_type(kind, socketType)
@@ -121,31 +123,34 @@ func zmq_socket(ep string, kind socketKind) (*zmq.Socket, string, error) {
 	socket, err := zmq.NewSocket(zmq_type)
 
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	err = setSocketOptions(socket, zmq_type)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	if socketDir == sockdirAccept {
 		err = socket.Bind(endpoint)
 		if err != nil {
-			return nil, "", err
+			return nil, err
 		}
+		binded = true
+
 	} else if socketDir == sockdirConnect {
 		err = socket.Connect(endpoint)
 		if err != nil {
-			return nil, "", err
+			return nil, err
 		}
 	}
 
-	return socket, endpoint, nil
+	return &zmq_io{socket, binded, endpoint}, nil
 }
 
 type zmq_io struct {
 	sock *zmq.Socket
+	binded bool
 	ep   string
 }
 
@@ -167,23 +172,17 @@ func (o *zmq_io) Close() error {
 }
 
 func (o *zmq_io) Unbind() error {
-	return o.sock.Unbind(o.ep)
-}
-
-func zmqIO(ep string, kind socketKind) (*zmq_io, error) {
-	socket, endpoint, err := zmq_socket(ep, kind)
-
-	if err != nil {
-		return nil, err
+	if o.binded == true {
+		return o.sock.Unbind(o.ep)
 	}
 
-	return &zmq_io{sock: socket, ep: endpoint}, nil
+	return nil
 }
 
 func NewZMQWriter(ep string) (io.WriteCloser, error) {
-	return zmqIO(ep, socketOutput)
+	return zmq_socket(ep, socketOutput)
 }
 
 func NewZMQReader(ep string) (io.ReadCloser, error) {
-	return zmqIO(ep, socketInput)
+	return zmq_socket(ep, socketInput)
 }
