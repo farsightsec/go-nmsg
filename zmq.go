@@ -178,14 +178,6 @@ func (o *zmq_io) Close() error {
 	return o.sock.Close()
 }
 
-func (o *zmq_io) Unbind() error {
-	if o.binded == true {
-		return o.sock.Unbind(o.ep)
-	}
-
-	return nil
-}
-
 func NewZMQWriter(ep string) (io.WriteCloser, error) {
 	return zmq_socket(ep, socketOutput)
 }
