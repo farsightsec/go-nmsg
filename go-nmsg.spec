@@ -41,7 +41,7 @@ go-nmsg is a pure go implementation of the NMSG container and payload format use
 This also provides the NMSG vendor base encoding modules Go code.
 
 %prep
-%setup -q -n %{repo}-%{commit}
+%setup -q -n %{name}-%{version}
 
 %build
 mkdir -p /builddir/go/src/github.com/farsightsec
