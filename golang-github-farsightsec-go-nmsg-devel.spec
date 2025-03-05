@@ -20,7 +20,7 @@ URL:            https://%{provider_prefix}
 Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
 BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
-BuildRequires:  golang-dnstap
+BuildRequires:  golang-dnstap rpmautospec
 Requires:       golang-google-protobuf-devel
 
 %if %{rhel} == 9
@@ -72,3 +72,4 @@ sort -u -o file-list file-list
 %doc README.md COPYRIGHT LICENSE
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %changelog
+%autochangelog
