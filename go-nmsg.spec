@@ -9,7 +9,7 @@
 %global commit          47b7bb43ccc744b12e75fa57f77c6303ad2dfd32
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
-Name:           go-nmsg
+Name:           golang-github-farsightsec-go-nmsg-devel
 Version:        0.2.0
 Release:        1%{dist}
 Summary:        Pure Golang NMSG Library
