@@ -8,8 +8,9 @@
 %global import_path     %{provider_prefix}
 %global commit          47b7bb43ccc744b12e75fa57f77c6303ad2dfd32
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
+%global goname          golang-github-farsightsec-nmsg
 
-Name:           golang-github-farsightsec-go-nmsg-devel
+Name:           go-nmsg
 Version:        0.2.0
 Release:        1%{dist}
 Summary:        Pure Golang NMSG Library
@@ -40,6 +41,13 @@ BuildRequires:  golang-gopkg-yaml-devel-v2
 go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
 This also provides the NMSG vendor base encoding modules Go code.
 
+%package -n %{goname}-devel
+Summary:	%{summary}
+BuildArch:  noarch
+%description -n %{goname}-devel
+go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
+This also provides the NMSG vendor base encoding modules Go code.
+
 %prep
 %setup -q -n %{repo}-%{commit}
 
@@ -63,7 +71,7 @@ sort -u -o file-list file-list
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
-%files -f file-list
+%files -n %{goname}-devel -f file-list
 # TODO: LICENSE
 #%license LICENSE COPYRIGHT
 %doc README.md COPYRIGHT LICENSE
