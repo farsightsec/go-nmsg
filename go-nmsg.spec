@@ -6,7 +6,6 @@
 # https://github.com/farsightsec/go-nmsg
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          47b7bb43ccc744b12e75fa57f77c6303ad2dfd32
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %global goname          golang-github-farsightsec-nmsg
 
@@ -49,7 +48,7 @@ go-nmsg is a pure go implementation of the NMSG container and payload format use
 This also provides the NMSG vendor base encoding modules Go code.
 
 %prep
-%setup -q -n %{repo}-%{commit}
+%setup -q
 
 %build
 mkdir -p /builddir/go/src/github.com/farsightsec
