@@ -7,7 +7,7 @@
 %global import_path     %{provider_prefix}
 
 # https://github.com/farsightsec/go-nmsg
-%global goipath         github.com/dnstap/golang-dnstap
+#%global goipath         github.com/farsightsec/go-nmsg
 
 %gometa
 
