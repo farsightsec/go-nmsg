@@ -1,12 +1,9 @@
 %global debug_package %{nil}
-#%global provider        github
-#%global provider_tld    com
-#%global project         farsightsec
-#%global repo            go-nmsg
+
 # https://github.com/farsightsec/go-nmsg
-#%global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
-#%global import_path     %{provider_prefix}
-#%global goname          golang-github-farsightsec-nmsg
+%global goipath         github.com/dnstap/golang-dnstap
+
+%gometa
 
 Name:           go-nmsg
 Version:        0.2.0
@@ -34,8 +31,6 @@ BuildRequires:  golang-gopkg-yaml-devel-v2
 
 %description
 %{summary}
-
-
 go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
 This also provides the NMSG vendor base encoding modules Go code.
 
