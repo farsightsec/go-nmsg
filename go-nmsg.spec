@@ -21,7 +21,7 @@ URL:            https://%{provider_prefix}
 Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
 BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
-BuildRequires:  golang-dnstap
+BuildRequires:  golang-github-dnstap-devel
 Requires:       golang-google-protobuf-devel
 
 %if %{rhel} == 9
