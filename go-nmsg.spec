@@ -1,4 +1,10 @@
 %global debug_package %{nil}
+%global provider        github
+%global provider_tld    com
+%global project         farsightsec
+%global repo            go-nmsg
+%global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
+%global import_path     %{provider_prefix}
 
 # https://github.com/farsightsec/go-nmsg
 %global goipath         github.com/dnstap/golang-dnstap
@@ -9,7 +15,6 @@ Name:           go-nmsg
 Version:        0.2.0
 Release:        1%{dist}
 Summary:        Pure Golang NMSG Library
-
 
 License:        MPLv2.0
 URL:            %{gourl}
