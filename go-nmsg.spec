@@ -6,7 +6,6 @@
 # https://github.com/farsightsec/go-nmsg
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %global goname          golang-github-farsightsec-nmsg
 
 Name:           go-nmsg
@@ -17,7 +16,7 @@ Summary:        Pure Golang NMSG Library
 
 License:        MPLv2.0
 URL:            https://%{provider_prefix}
-Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+Source0:        %{gosource}
 
 BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
 BuildRequires:  golang-github-dnstap-devel
