@@ -30,7 +30,7 @@ BuildRequires:	git-lfs
 
 %else
 
-BuildRequires:  golang-gopkg-yaml-devel-v2
+BuildRequires:  golang-gopkg-yaml-2-devel
 
 %endif
 
