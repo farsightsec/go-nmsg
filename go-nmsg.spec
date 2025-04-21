@@ -32,7 +32,8 @@ This also provides the NMSG vendor base encoding modules Go code.}
 %package -n %{goname}-devel
 Summary:	%{summary}
 BuildArch:  noarch
-%description -n %{common_description}-devel
+%description -n %{goname}-devel
+%{common_description}
 
 %prep
 %setup -q
