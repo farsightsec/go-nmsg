@@ -18,26 +18,21 @@ BuildRequires:  golang-github-dnstap-devel
 Requires:       golang-google-protobuf-devel
 
 %if %{rhel} == 9
-
 BuildRequires:	git-lfs
-
 %else
-
 BuildRequires:  golang-gopkg-yaml-2-devel
-
 %endif
 
-%description
-%{summary}
+%global common_description %{expand:
 go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
-This also provides the NMSG vendor base encoding modules Go code.
+This also provides the NMSG vendor base encoding modules Go code.}
+%description
+%{common_description}
 
 %package -n %{goname}-devel
 Summary:	%{summary}
 BuildArch:  noarch
-%description -n %{goname}-devel
-go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
-This also provides the NMSG vendor base encoding modules Go code.
+%description -n %{common_description}-devel
 
 %prep
 %setup -q
@@ -59,7 +54,6 @@ sort -u -o file-list file-list
 %{!?_licensedir:%global license %doc}
 
 %files -n %{goname}-devel -f file-list
-# TODO: LICENSE
 %license LICENSE COPYRIGHT
 %doc README.md COPYRIGHT LICENSE
 %dir %{gopath}/src/%{goipath}
