@@ -66,5 +66,5 @@ sort -u -o file-list file-list
 # TODO: LICENSE
 #%license LICENSE COPYRIGHT
 %doc README.md COPYRIGHT LICENSE
-%dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
+%dir %{gopath}/src/%{goipath}
 %changelog
