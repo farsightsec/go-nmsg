@@ -56,12 +56,12 @@ ln -s $PWD /builddir/go/src/github.com/farsightsec/go-nmsg
 # installs source code for building other projects
 # find all *.go but no *_test.go files and generate file-list
 # and no main.go as no executables her
-install -d -p %{buildroot}/%{gopath}/src/%{import_path}/
+install -d -p %{buildroot}/%{gopath}/src/%{goipath}/
 for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
-    echo "%%dir %%{gopath}/src/%%{import_path}/$(dirname $file)" >> file-list
-    install -d -p %{buildroot}/%{gopath}/src/%{import_path}/$(dirname $file)
-    cp -pav $file %{buildroot}/%{gopath}/src/%{import_path}/$file
-    echo "%%{gopath}/src/%%{import_path}/$file" >> file-list
+    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> file-list
+    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file)
+    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file
+    echo "%%{gopath}/src/%%{goipath}/$file" >> file-list
 done
 sort -u -o file-list file-list
 
