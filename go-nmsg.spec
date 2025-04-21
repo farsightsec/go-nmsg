@@ -3,8 +3,6 @@
 #%global provider_tld    com
 #%global project         farsightsec
 #%global repo            go-nmsg
-#%global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
-#%global import_path     %{provider_prefix}
 # https://github.com/farsightsec/go-nmsg
 %global goipath         github.com/farsightsec/go-nmsg
 
