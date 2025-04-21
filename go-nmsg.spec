@@ -1,8 +1,4 @@
 %global debug_package %{nil}
-#%global provider        github
-#%global provider_tld    com
-#%global project         farsightsec
-#%global repo            go-nmsg
 # https://github.com/farsightsec/go-nmsg
 %global goipath         github.com/farsightsec/go-nmsg
 
