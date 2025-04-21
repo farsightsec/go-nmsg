@@ -42,10 +42,6 @@ This also provides the NMSG vendor base encoding modules Go code.
 %prep
 %setup -q
 
-%build
-mkdir -p /builddir/go/src/github.com/farsightsec
-#ln -s $PWD /builddir/go/src/github.com/farsightsec/go-nmsg
-
 %install
 # installs source code for building other projects
 # find all *.go but no *_test.go files and generate file-list
