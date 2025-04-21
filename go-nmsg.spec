@@ -60,7 +60,7 @@ sort -u -o file-list file-list
 
 %files -n %{goname}-devel -f file-list
 # TODO: LICENSE
-#%license LICENSE COPYRIGHT
+%license LICENSE COPYRIGHT
 %doc README.md COPYRIGHT LICENSE
 %dir %{gopath}/src/%{goipath}
 %changelog
