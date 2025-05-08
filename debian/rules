@@ -2,7 +2,3 @@
 
 %:
 	dh $@ --with=golang --builddirectory=_build --buildsystem=golang
-
-override_dh_auto_test:
-	echo "Tests seem to be failing"
-	dh_auto_test || true
