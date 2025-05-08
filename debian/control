@@ -6,12 +6,12 @@ Build-Depends:
  debhelper-compat (= 13),
  dh-golang,
  golang-any,
- golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
+ golang-github-pebbe-zmq4-dev,
+ golang-google-protobuf-dev,
  golang-gopkg-yaml.v2-dev,
  libnmsg-dev (>= 1.1.0~),
  pkg-config,
- zmq4
 Standards-Version: 4.5.1
 Vcs-Git: https://github.com/farsightsec/go-nmsg.git
 Vcs-Browser: https://github.com/farsightsec/go-nmsg
