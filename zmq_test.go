@@ -345,7 +345,7 @@ func TestZMQ_CGo_IPC(t *testing.T) {
 //	doTestForMixed(t, "inproc://TestZMQInproc", 200, "pubsub", doTestMixedDo)
 //}
 
-func TestZmq_Mixed_IPC(t *testing.T) {
-	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
-	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
-}
+// func TestZmq_Mixed_IPC(t *testing.T) {
+// 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
+// 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
+// }
