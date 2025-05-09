@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-export CGO_ENABLED=1
+export CGO_ENABLED=0
 
 %:
 	dh $@ --with=golang --builddirectory=_build --buildsystem=golang
