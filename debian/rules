@@ -4,3 +4,6 @@ export CGO_ENABLED=0
 
 %:
 	dh $@ --with=golang --builddirectory=_build --buildsystem=golang
+
+override_dh_auto_build:
+	CGO_ENABLED=0 dh_auto_build $@
