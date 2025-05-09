@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-export CGO_ENABLED=0
+export DH_GOLANG_EXCLUDES := cgo-nmsg
 
 %:
 	dh $@ --with=golang --builddirectory=_build --buildsystem=golang
