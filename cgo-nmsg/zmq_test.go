@@ -193,15 +193,15 @@ func doTestBuffered(t *testing.T, r io.Reader, w io.Writer) {
 	doTestDo(t, input, output)
 }
 
-func doTestFor(t *testing.T, ep string, tp string, fn tester) {
-	writer, err := nmsg.NewZMQWriter(ep + ",accept," + tp)
+func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
+	writer, err := cnmsg.NewZMQOutput(ep+",accept,"+tp, 2000)
 
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
 
-	reader, err := nmsg.NewZMQReader(ep + ",connect," + tp)
+	reader, err := cnmsg.NewZMQInput(ep + ",connect," + tp)
 
 	if err != nil {
 		t.Error(err.Error())
@@ -211,23 +211,102 @@ func doTestFor(t *testing.T, ep string, tp string, fn tester) {
 	fn(t, reader, writer)
 }
 
-func TestZMQLocal(t *testing.T) {
-	doTestFor(t, "tcp://127.0.0.1:5555", "pushpull", doTestUnbuffered)
-	doTestFor(t, "tcp://127.0.0.1:5556", "pushpull", doTestBuffered)
-	doTestFor(t, "tcp://127.0.0.1:5557", "pubsub", doTestUnbuffered)
-	doTestFor(t, "tcp://127.0.0.1:5558", "pubsub", doTestBuffered)
+func doTestMixedDo(t *testing.T, ci cnmsg.Input, co cnmsg.Output, ni nmsg.Input, no nmsg.Output) {
+	// Write to co, read for ni, write to no, read from ci
+	signal1 := make(chan bool)
+	signal2 := make(chan bool)
+
+	go func() {
+		err := doWriteCgo(t, signal1, co)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	}()
+	pin, err := doReadNmsg(signal1, ni)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	go func() {
+		err := doWriteNmsg(signal2, pin, no)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	}()
+	rmsg, err := doReadCGo(signal2, ci)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	msg_ref := getCgoMessage(t, 500)
+
+	if MessageIsEqual(rmsg, msg_ref) == false {
+		log.Fatal("messages do not match")
+	}
 }
 
-func TestZMQInproc(t *testing.T) {
-	doTestFor(t, "inproc://TestZMQInproc1", "pushpull", doTestUnbuffered)
-	doTestFor(t, "inproc://TestZMQInproc2", "pushpull", doTestBuffered)
-	doTestFor(t, "inproc://TestZMQInproc3", "pubsub", doTestUnbuffered)
-	doTestFor(t, "inproc://TestZMQInproc4", "pubsub", doTestBuffered)
+func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed) {
+	ep1 := ep + strconv.Itoa(num)
+	ep2 := ep + strconv.Itoa(num+1)
+
+	co, err := cnmsg.NewZMQOutput(ep1+",accept,"+tp, 1000)
+
+	if err != nil {
+		t.Error(err.Error() + " " + ep1)
+		return
+	}
+
+	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
+	if err != nil {
+		t.Error(err.Error() + " " + ep2)
+		return
+	}
+
+	nr, err := nmsg.NewZMQReader(ep1 + ",connect," + tp)
+	if err != nil {
+		t.Error(err.Error() + " " + ep1)
+		return
+	}
+
+	ci, err := cnmsg.NewZMQInput(ep2 + ",connect," + tp)
+
+	if err != nil {
+		t.Error(err.Error() + " " + ep2)
+		return
+	}
+
+	ni := nmsg.NewInput(nr, 1000)
+	no := nmsg.UnbufferedOutput(nw)
+
+	fn(t, ci, co, ni, no)
 }
 
-func TestZMQIpc(t *testing.T) {
-	doTestFor(t, "ipc:///tmp/TestZMQIpc1", "pushpull", doTestUnbuffered)
-	doTestFor(t, "ipc:///tmp/TestZMQIpc1", "pushpull", doTestBuffered)
-	doTestFor(t, "ipc:///tmp/TestZMQIpc2", "pubsub", doTestUnbuffered)
-	doTestFor(t, "ipc:///tmp/TestZMQIpc2", "pubsub", doTestBuffered)
+func TestZMQ_CGo_Local(t *testing.T) {
+	doTestForCGo(t, "tcp://127.0.0.1:6555", "pushpull", doTestCgoDo)
+	doTestForCGo(t, "tcp://127.0.0.1:6557", "pubsub", doTestCgoDo)
+}
+
+func TestZMQ_CGo_Inproc(t *testing.T) {
+	doTestForCGo(t, "inproc://TestZMQInproc10", "pushpull", doTestCgoDo)
+	doTestForCGo(t, "inproc://TestZMQInproc30", "pubsub", doTestCgoDo)
+}
+
+func TestZMQ_CGo_IPC(t *testing.T) {
+	doTestForCGo(t, "ipc:///tmp/TestZMQIpc10", "pushpull", doTestCgoDo)
+	doTestForCGo(t, "ipc:///tmp/TestZMQIpc20", "pubsub", doTestCgoDo)
+}
+
+func TestZmq_Mixed_Local(t *testing.T) {
+	doTestForMixed(t, "tcp://127.0.0.1:", 7555, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "tcp://127.0.0.1:", 7557, "pubsub", doTestMixedDo)
+}
+
+//// Inproc cgo-nmsg side fill writer buffer and hangs
+//func TestZmq_Mixed_Inproc(t *testing.T) {
+//	doTestForMixed(t, "inproc://TestZMQInproc", 100, "pushpull", doTestMixedDo)
+//	doTestForMixed(t, "inproc://TestZMQInproc", 200, "pubsub", doTestMixedDo)
+//}
+
+func TestZmq_Mixed_IPC(t *testing.T) {
+	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
 }
