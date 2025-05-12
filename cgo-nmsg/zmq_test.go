@@ -3,10 +3,8 @@ package nmsg_test
 import (
 	"errors"
 	"github.com/farsightsec/go-nmsg"
-	cnmsg "github.com/farsightsec/go-nmsg/cgo-nmsg"
 	"io"
 	"log"
-	"strconv"
 	"testing"
 )
 
