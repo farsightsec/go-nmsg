@@ -9,8 +9,6 @@ import (
 )
 
 type tester func(*testing.T, io.Reader, io.Writer)
-type testerCgo func(*testing.T, cnmsg.Input, cnmsg.Output)
-type testerMixed func(*testing.T, cnmsg.Input, cnmsg.Output, nmsg.Input, nmsg.Output)
 
 func PayloadIsEqual(c *nmsg.NmsgPayload, d *nmsg.NmsgPayload) bool {
 	if *c.Vid != *d.Vid || *c.Msgtype != *d.Msgtype {
@@ -18,82 +16,6 @@ func PayloadIsEqual(c *nmsg.NmsgPayload, d *nmsg.NmsgPayload) bool {
 	}
 
 	return compare(c.Payload, d.Payload)
-}
-
-func MessageIsEqual(c *cnmsg.Message, d *cnmsg.Message) bool {
-	ct, cv := c.GetMsgtype()
-	dt, dv := d.GetMsgtype()
-	if ct != dt || cv != dv {
-		return false
-	}
-
-	cp, err := c.GetBytesField("payload", 0)
-	if err != nil {
-		return false
-	}
-
-	dp, err := d.GetBytesField("payload", 0)
-	if err != nil {
-		return false
-	}
-
-	return compare(cp, dp)
-}
-
-func getCgoMessage(t *testing.T, size int) *cnmsg.Message {
-	mod := cnmsg.MessageModLookupByName("base", "encode")
-	if mod == nil {
-		log.Fatal("module not found")
-	}
-	msg := cnmsg.NewMessage(mod)
-	if err := msg.SetEnumField("type", 0, "TEXT"); err != nil {
-		log.Fatal(err)
-	}
-
-	payload := make([]byte, size)
-	for i := range payload {
-		payload[i] = '0'
-	}
-
-	if err := msg.SetBytesField("payload", 0, payload); err != nil {
-		log.Fatal(err)
-	}
-
-	return msg
-}
-
-func doWriteCgo(t *testing.T, s chan bool, o cnmsg.Output) error {
-	for {
-		select {
-		case _ = <-s:
-			return nil
-		default:
-			msg := getCgoMessage(t, 500)
-			err := o.Write(msg)
-			if err != nil {
-				return err
-			}
-		}
-	}
-}
-
-func doReadCGo(s chan bool, i cnmsg.Input) (*cnmsg.Message, error) {
-	var rmsg *cnmsg.Message
-	var err error
-	for {
-		rmsg, err = i.Read()
-		if err != nil {
-			if cnmsg.ErrorRetry(err) == false {
-				return nil, err
-			}
-		} else if rmsg == nil {
-			return nil, errors.New("receive nil message")
-		} else {
-			break
-		}
-	}
-	s <- true
-	return rmsg, nil
 }
 
 func doWriteNmsg(s chan bool, msg *nmsg.NmsgPayload, o nmsg.Output) error {
@@ -152,28 +74,6 @@ func doTestDo(t *testing.T, i nmsg.Input, o nmsg.Output) {
 
 	if PayloadIsEqual(pout, pin) == false {
 		t.Error(errors.New("Failed to compare in and out payloads"))
-	}
-}
-
-func doTestCgoDo(t *testing.T, i cnmsg.Input, o cnmsg.Output) {
-	signal := make(chan bool)
-
-	go func() {
-		err := doWriteCgo(t, signal, o)
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-	}()
-
-	rmsg, err := doReadCGo(signal, i)
-
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	msg_ref := getCgoMessage(t, 500)
-	if MessageIsEqual(rmsg, msg_ref) == false {
-		log.Fatal("messages do not match")
 	}
 }
 
