@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/farsightsec/go-nmsg"
 	"io"
-	"log"
 	"testing"
 )
 
