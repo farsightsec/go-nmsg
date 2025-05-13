@@ -14,6 +14,22 @@ type tester func(*testing.T, io.Reader, io.Writer)
 type testerCgo func(*testing.T, cnmsg.Input, cnmsg.Output)
 type testerMixed func(*testing.T, cnmsg.Input, cnmsg.Output, nmsg.Input, nmsg.Output)
 
+func compare(a, b []byte) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func testMessage(length int) nmsg.Message {
+	return &TestMessage{Bytes: make([]byte, length)}
+}
+
 func PayloadIsEqual(c *nmsg.NmsgPayload, d *nmsg.NmsgPayload) bool {
 	if *c.Vid != *d.Vid || *c.Msgtype != *d.Msgtype {
 		return false
