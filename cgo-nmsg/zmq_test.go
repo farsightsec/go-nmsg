@@ -265,10 +265,11 @@ func TestZMQ_CGo_IPC(t *testing.T) {
 	doTestForCGo(t, "ipc:///tmp/TestZMQIpc20", "pubsub", doTestCgoDo)
 }
 
-// func TestZmq_Mixed_Local(t *testing.T) {
-// 	doTestForMixed(t, "tcp://127.0.0.1:", 7555, "pushpull", doTestMixedDo)
-// 	doTestForMixed(t, "tcp://127.0.0.1:", 7557, "pubsub", doTestMixedDo)
-// }
+# This test is currently failing with a segfault
+func TestZmq_Mixed_Local(t *testing.T) {
+	doTestForMixed(t, "tcp://127.0.0.1:", 7555, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "tcp://127.0.0.1:", 7557, "pubsub", doTestMixedDo)
+}
 
 //// Inproc cgo-nmsg side fill writer buffer and hangs
 //func TestZmq_Mixed_Inproc(t *testing.T) {
@@ -276,7 +277,8 @@ func TestZMQ_CGo_IPC(t *testing.T) {
 //	doTestForMixed(t, "inproc://TestZMQInproc", 200, "pubsub", doTestMixedDo)
 //}
 
-// func TestZmq_Mixed_IPC(t *testing.T) {
-// 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
-// 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
-// }
+# This test is currently failing with a segfault
+func TestZmq_Mixed_IPC(t *testing.T) {
+	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
+}
