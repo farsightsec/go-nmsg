@@ -26,10 +26,6 @@ func compare(a, b []byte) bool {
 	return true
 }
 
-func testMessage(length int) nmsg.Message {
-	return &TestMessage{Bytes: make([]byte, length)}
-}
-
 func PayloadIsEqual(c *nmsg.NmsgPayload, d *nmsg.NmsgPayload) bool {
 	if *c.Vid != *d.Vid || *c.Msgtype != *d.Msgtype {
 		return false
@@ -145,34 +141,6 @@ func doReadNmsg(s chan bool, i nmsg.Input) (*nmsg.NmsgPayload, error) {
 	return rmsg, nil
 }
 
-func doTestDo(t *testing.T, i nmsg.Input, o nmsg.Output) {
-
-	signal := make(chan bool)
-
-	pout, err := nmsg.Payload(testMessage(900))
-	if err != nil {
-		t.Error(err.Error())
-		return
-	}
-
-	go func() {
-		err := doWriteNmsg(signal, pout, o)
-		if err != nil {
-			t.Fatal(err.Error())
-		}
-	}()
-
-	pin, err := doReadNmsg(signal, i)
-	if err != nil {
-		t.Error(err.Error())
-		return
-	}
-
-	if PayloadIsEqual(pout, pin) == false {
-		t.Error(errors.New("Failed to compare in and out payloads"))
-	}
-}
-
 func doTestCgoDo(t *testing.T, i cnmsg.Input, o cnmsg.Output) {
 	signal := make(chan bool)
 
@@ -193,20 +161,6 @@ func doTestCgoDo(t *testing.T, i cnmsg.Input, o cnmsg.Output) {
 	if MessageIsEqual(rmsg, msg_ref) == false {
 		log.Fatal("messages do not match")
 	}
-}
-
-func doTestUnbuffered(t *testing.T, r io.Reader, w io.Writer) {
-	input := nmsg.NewInput(r, 1000)
-	output := nmsg.UnbufferedOutput(w)
-
-	doTestDo(t, input, output)
-}
-
-func doTestBuffered(t *testing.T, r io.Reader, w io.Writer) {
-	input := nmsg.NewInput(r, 1000)
-	output := nmsg.BufferedOutput(w)
-
-	doTestDo(t, input, output)
 }
 
 func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
