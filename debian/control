@@ -11,8 +11,6 @@ Build-Depends:
  golang-google-protobuf-dev,
  golang-gopkg-yaml.v2-dev,
  libnmsg-dev (>= 1.1.0~),
- libzmq3-dev,
- pkg-config,
 Standards-Version: 4.5.1
 Vcs-Git: https://github.com/farsightsec/go-nmsg.git
 Vcs-Browser: https://github.com/farsightsec/go-nmsg
@@ -24,8 +22,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  golang-github-dnstap-go-dnstap-dev,
  golang-github-pebbe-zmq4-dev,
  golang-google-protobuf-dev,
- libzmq3-dev,
- pkg-config,
 Description: Pure Golang NMSG Library
  go-nmsg is a pure go implementation of the NMSG container and payload
  format used by the C nmsg toolkit and library. It does not implement
