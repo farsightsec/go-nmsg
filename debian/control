@@ -25,7 +25,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  golang-github-pebbe-zmq4-dev,
  golang-google-protobuf-dev,
  golang-gopkg-yaml.v2-dev,
- libnmsg-dev (>= 1.1.0~),
  libzmq3-dev,
 Description: Pure Golang NMSG Library
  go-nmsg is a pure go implementation of the NMSG container and payload
@@ -40,11 +39,7 @@ Package: golang-github-farsightsec-go-nmsg-base-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
  golang-github-dnstap-go-dnstap-dev,
- golang-github-pebbe-zmq4-dev,
  golang-google-protobuf-dev,
- golang-gopkg-yaml.v2-dev,
- libnmsg-dev (>= 1.1.0~),
- libzmq3-dev,
 Description: NMSG vendor base encoding modules for Golang
  This package provides generated Go code from Protocol Buffers Version 2
  specifications for NMSG vendor base encoding modules: Dns, DnsQR, Email,
