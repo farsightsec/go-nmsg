@@ -1,61 +1,72 @@
+# Define backup go macros
+%if %{rhel} == 8
+%global gopkg %package -n %{goname}-devel \
+Summary:	%{summary} \
+BuildArch:  noarch \
+%description -n %{goname}-devel \
+%{common_description}
+%global goprep(A) %setup -q
+%global generate_buildrequires echo "Need more specific macro on rhel8"
+%global gopkginstall for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do \
+    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list ;\
+    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file) ;\
+    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file ;\
+    echo "%%{gopath}/src/%%{goipath}/$file" >> devel.file-list ;\
+done ;\
+sort -u -o devel.file-list devel.file-list
+%global gopkgfiles %files -n %{goname}-devel -f devel.file-list
+%global gocheck echo "skipping gocheck on rhel8"
+# Specific BuildRequires macro
+%global go_generate_buildrequires BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} golang-github-dnstap-devel golang-gopkg-yaml-2-devel
+%endif
+
 %global debug_package %{nil}
 # https://github.com/farsightsec/go-nmsg
 %global goipath         github.com/farsightsec/go-nmsg
+%global common_description %{expand:
+go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
+This also provides the NMSG vendor base encoding modules Go code.}
 
 Name:           go-nmsg
 Version:        0.2.0
 Release:        1%{dist}
 Summary:        Pure Golang NMSG Library
-
 %gometa
-
 License:        MPLv2.0
 URL:            %{gourl}
 Source0:        %{gosource}
 
-BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
-BuildRequires:  golang-github-dnstap-devel
+%description
+%{common_description}
+
+%go_generate_buildrequires
+
 Requires:       golang-google-protobuf-devel
 
 %if %{rhel} == 9
 BuildRequires:	git-lfs
-%else
-BuildRequires:  golang-gopkg-yaml-2-devel
 %endif
 
-%global common_description %{expand:
-go-nmsg is a pure go implementation of the NMSG container and payload format used by the C nmsg toolkit and library.
-This also provides the NMSG vendor base encoding modules Go code.}
-%description
-%{common_description}
-
-%package -n %{goname}-devel
-Summary:	%{summary}
-BuildArch:  noarch
-%description -n %{goname}-devel
-%{common_description}
+%gopkg
 
 %prep
-%setup -q
+%goprep -A
+%autopatch -p1
 
 %install
-# installs source code for building other projects
-# find all *.go but no *_test.go files and generate file-list
-# and no main.go as no executables her
-install -d -p %{buildroot}/%{gopath}/src/%{goipath}/
-for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
-    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> file-list
-    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file)
-    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file
-    echo "%%{gopath}/src/%%{goipath}/$file" >> file-list
-done
-sort -u -o file-list file-list
+%gopkginstall
+
+%if %{with check}
+%check
+%gocheck
+%endif
 
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
-%files -n %{goname}-devel -f file-list
+%gopkgfiles
 %license LICENSE COPYRIGHT
 %doc README.md COPYRIGHT LICENSE
 %dir %{gopath}/src/%{goipath}
+
 %changelog
