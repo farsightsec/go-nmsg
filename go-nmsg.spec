@@ -39,15 +39,17 @@ Source0:        %{gosource}
 %description
 %{common_description}
 
+%generate_buildrequires
 %go_generate_buildrequires
 
-Requires:       golang-google-protobuf-devel
+Requires: golang-google-protobuf-devel
 
 %if %{rhel} == 9
 BuildRequires:	git-lfs
 %endif
 
 %gopkg
+Requires: golang-github-dnstap-devel
 
 %prep
 %goprep -A
