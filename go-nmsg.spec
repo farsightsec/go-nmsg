@@ -45,7 +45,7 @@ BuildRequires:	git-lfs
 %endif
 
 %gopkg
-Requires: golang-github-dnstap-devel golang-github-pebbe-zmq4
+Requires: golang-github-dnstap golang-github-dnstap-devel golang-github-pebbe-zmq4
 
 %prep
 %goprep -A
