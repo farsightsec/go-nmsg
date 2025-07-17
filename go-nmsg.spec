@@ -36,7 +36,7 @@ Source0:        %{gosource}
 %description
 %{common_description}
 
-BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} golang-github-dnstap-devel golang-gopkg-yaml-2-devel
+BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} golang-github-dnstap-devel golang-github-pebbe-zmq4 golang-gopkg-yaml-2-devel
 
 Requires: golang-google-protobuf-devel
 
@@ -45,7 +45,7 @@ BuildRequires:	git-lfs
 %endif
 
 %gopkg
-Requires: golang-github-dnstap-devel
+Requires: golang-github-dnstap-devel golang-github-pebbe-zmq4
 
 %prep
 %goprep -A
