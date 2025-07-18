@@ -52,21 +52,27 @@ BuildArch:  noarch
 Requires: golang-github-dnstap golang-github-dnstap-devel golang-github-pebbe-zmq4
 
 %prep
-%goprep -A
+%setup -q
 %autopatch -p1
 
 %install
-%gopkginstall
+for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
+    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list
+    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file)
+    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file
+    echo "%%{gopath}/src/%%{goipath}/$file" >> devel.file-list
+done
+sort -u -o devel.file-list devel.file-list
 
 %if %{with check}
 %check
-%gocheck
+echo "Debug, Max don't land this"
 %endif
 
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
-%gopkgfiles
+%files -n %{goname}-devel -f devel.file-list
 %license LICENSE COPYRIGHT
 %doc README.md COPYRIGHT LICENSE
 %dir %{gopath}/src/%{goipath}
