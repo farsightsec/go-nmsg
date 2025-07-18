@@ -44,7 +44,11 @@ Requires: golang-google-protobuf-devel
 BuildRequires:	git-lfs
 %endif
 
-%gopkg
+%package -n %{goname}-devel
+Summary:	%{summary}
+BuildArch:  noarch
+%description -n %{goname}-devel
+%{common_description}
 Requires: golang-github-dnstap golang-github-dnstap-devel golang-github-pebbe-zmq4
 
 %prep
