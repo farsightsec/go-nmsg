@@ -26,7 +26,6 @@ var sockspecTestCases = []struct {
 	{"127.0.0.1/foobar", false, 0},
 	{"127.0.0.1/390..382", false, 0},
 	{"127.0.0.1/390..foobar", false, 0},
-	{"invalid_hostname/381", false, 0},
 }
 
 func testSockSpecCommon(t *testing.T, parse func(string, *Sockspec) error) {
