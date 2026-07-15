@@ -48,7 +48,7 @@ func NewZMQOutput(zmqep string, bufsiz int) (Output, error) {
 // (e.g. defer cgoNmsg.ShutdownZMQ()) after all ZMQ inputs/outputs are closed.
 func ShutdownZMQ() {
 	if zmqContext != nil {
-		C.zmq_ctx_destroy(zmqContext)
+		C.zmq_ctx_term(zmqContext)
 		zmqContext = nil
 	}
 }
