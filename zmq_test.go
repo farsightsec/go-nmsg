@@ -240,32 +240,37 @@ func doTestMixedDo(t *testing.T, ci cnmsg.Input, co cnmsg.Output, ni nmsg.Input,
 	// Write to co, read for ni, write to no, read from ci
 	signal1 := make(chan bool)
 	signal2 := make(chan bool)
+	errCh1 := make(chan error, 1)
+	errCh2 := make(chan error, 1)
 
 	go func() {
-		err := doWriteCgo(t, signal1, co)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
+		errCh1 <- doWriteCgo(t, signal1, co)
 	}()
 	pin, err := doReadNmsg(signal1, ni)
 	if err != nil {
-		log.Fatal(err.Error())
+		t.Fatal(err.Error())
 	}
+	werr := <-errCh1
+	if werr != nil {
+		t.Fatal(werr.Error())
+	}
+
 	go func() {
-		err := doWriteNmsg(signal2, pin, no)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
+		errCh2 <- doWriteNmsg(signal2, pin, no)
 	}()
 	rmsg, err := doReadCGo(signal2, ci)
 	if err != nil {
-		log.Fatal(err.Error())
+		t.Fatal(err.Error())
+	}
+	werr = <-errCh2
+	if werr != nil {
+		t.Fatal(werr.Error())
 	}
 
 	msg_ref := getCgoMessage(t, 500)
 
 	if MessageIsEqual(rmsg, msg_ref) == false {
-		log.Fatal("messages do not match")
+		t.Fatal("messages do not match")
 	}
 }
 
