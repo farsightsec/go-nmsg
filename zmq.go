@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 DomainTools LLC
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package nmsg
 
 import (
@@ -129,12 +137,14 @@ func zmq_socket(ep string, kind socketKind) (*zmq_io, error) {
 
 	err = setSocketOptions(socket, zmq_type)
 	if err != nil {
+		socket.Close()
 		return nil, err
 	}
 
 	if socketDir == sockdirAccept {
 		err = socket.Bind(endpoint)
 		if err != nil {
+			socket.Close()
 			return nil, err
 		}
 		bound = true
@@ -142,6 +152,7 @@ func zmq_socket(ep string, kind socketKind) (*zmq_io, error) {
 	} else if socketDir == sockdirConnect {
 		err = socket.Connect(endpoint)
 		if err != nil {
+			socket.Close()
 			return nil, err
 		}
 	}
@@ -169,8 +180,13 @@ func (o *zmq_io) Write(p []byte) (int, error) {
 }
 
 func (o *zmq_io) Close() error {
-	if o.bound == true {
+	if o.bound {
 		err := o.sock.Unbind(o.ep)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := o.sock.Disconnect(o.ep)
 		if err != nil {
 			return err
 		}
