@@ -1,13 +1,22 @@
+/*
+ * Copyright (c) 2026 DomainTools LLC
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 package nmsg_test
 
 import (
 	"errors"
-	"github.com/farsightsec/go-nmsg"
-	cnmsg "github.com/farsightsec/go-nmsg/cgo-nmsg"
 	"io"
 	"log"
 	"strconv"
 	"testing"
+
+	"github.com/farsightsec/go-nmsg"
+	cnmsg "github.com/farsightsec/go-nmsg/cgo-nmsg"
 )
 
 type tester func(*testing.T, io.Reader, io.Writer)
@@ -348,4 +357,9 @@ func TestZmq_Mixed_Local(t *testing.T) {
 func TestZmq_Mixed_IPC(t *testing.T) {
 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 200, "pubsub", doTestMixedDo)
+}
+
+func TestMain(m *testing.M) {
+	m.Run()
+	cnmsg.ShutdownZMQ()
 }
