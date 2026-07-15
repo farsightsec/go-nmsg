@@ -16,7 +16,10 @@ import (
 var zmqContext unsafe.Pointer
 
 func init() {
-	zmqContext = C.zmq_init(1)
+	zmqContext = C.zmq_ctx_new()
+	if zmqContext == nil {
+		panic("failed to create ZMQ context")
+	}
 }
 
 // NewZMQInput opens an Input reading from the given ZMQ endpoint.
@@ -30,7 +33,7 @@ func NewZMQInput(zmqep string) (Input, error) {
 	return &nmsgInput{input: inp}, nil
 }
 
-// NewZMQInput creates an output writing to the given ZMQ endpoint.
+// NewZMQOutput creates an output writing to the given ZMQ endpoint.
 func NewZMQOutput(zmqep string, bufsiz int) (Output, error) {
 	czmqep := C.CString(zmqep)
 	defer C.free(unsafe.Pointer(czmqep))
@@ -39,4 +42,13 @@ func NewZMQOutput(zmqep string, bufsiz int) (Output, error) {
 		return nil, errors.New("failed to create NMSG output")
 	}
 	return &nmsgOutput{output: outp}, nil
+}
+
+// ShutdownZMQ destroys the ZMQ context. Callers should invoke this
+// (e.g. defer cgoNmsg.ShutdownZMQ()) after all ZMQ inputs/outputs are closed.
+func ShutdownZMQ() {
+	if zmqContext != nil {
+		C.zmq_ctx_destroy(zmqContext)
+		zmqContext = nil
+	}
 }
