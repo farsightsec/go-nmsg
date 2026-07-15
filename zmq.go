@@ -2,9 +2,10 @@ package nmsg
 
 import (
 	"errors"
-	zmq "github.com/pebbe/zmq4"
 	"io"
 	"strings"
+
+	zmq "github.com/pebbe/zmq4"
 )
 
 type socketKind int
@@ -100,7 +101,7 @@ func zmq_socket_type(kind socketKind, socketType socketType) zmq.Type {
 func zmq_socket(ep string, kind socketKind) (*zmq_io, error) {
 	endpoint, socketDir, socketType, err := munge_endpoint(ep)
 
-	binded := false
+	bound := false
 
 	if err != nil {
 		return nil, err
@@ -136,7 +137,7 @@ func zmq_socket(ep string, kind socketKind) (*zmq_io, error) {
 		if err != nil {
 			return nil, err
 		}
-		binded = true
+		bound = true
 
 	} else if socketDir == sockdirConnect {
 		err = socket.Connect(endpoint)
@@ -145,13 +146,13 @@ func zmq_socket(ep string, kind socketKind) (*zmq_io, error) {
 		}
 	}
 
-	return &zmq_io{socket, binded, endpoint}, nil
+	return &zmq_io{socket, bound, endpoint}, nil
 }
 
 type zmq_io struct {
-	sock *zmq.Socket
-	binded bool
-	ep   string
+	sock  *zmq.Socket
+	bound bool
+	ep    string
 }
 
 func (i *zmq_io) Read(p []byte) (n int, err error) {
@@ -168,7 +169,7 @@ func (o *zmq_io) Write(p []byte) (int, error) {
 }
 
 func (o *zmq_io) Close() error {
-	if o.binded == true {
+	if o.bound == true {
 		err := o.sock.Unbind(o.ep)
 		if err != nil {
 			return err
