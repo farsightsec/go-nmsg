@@ -139,7 +139,6 @@ func doReadNmsg(s chan bool, i nmsg.Input) (*nmsg.NmsgPayload, error) {
 }
 
 func doTestDo(t *testing.T, i nmsg.Input, o nmsg.Output) {
-
 	signal := make(chan bool)
 
 	pout, err := nmsg.Payload(testMessage(900))
@@ -177,7 +176,6 @@ func doTestCgoDo(t *testing.T, i cnmsg.Input, o cnmsg.Output) {
 	}()
 
 	rmsg, err := doReadCGo(signal, i)
-
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -204,36 +202,36 @@ func doTestBuffered(t *testing.T, r io.Reader, w io.Writer) {
 
 func doTestFor(t *testing.T, ep string, tp string, fn tester) {
 	writer, err := nmsg.NewZMQWriter(ep + ",accept," + tp)
-
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
+	defer writer.Close()
 
 	reader, err := nmsg.NewZMQReader(ep + ",connect," + tp)
-
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
+	defer reader.Close()
 
 	fn(t, reader, writer)
 }
 
 func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
 	writer, err := cnmsg.NewZMQOutput(ep+",accept,"+tp, 2000)
-
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
+	defer writer.Close()
 
 	reader, err := cnmsg.NewZMQInput(ep + ",connect," + tp)
-
 	if err != nil {
 		t.Error(err.Error())
 		return
 	}
+	defer reader.Close()
 
 	fn(t, reader, writer)
 }
@@ -276,30 +274,32 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 	ep2 := ep + strconv.Itoa(num+1)
 
 	co, err := cnmsg.NewZMQOutput(ep1+",accept,"+tp, 1000)
-
 	if err != nil {
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
+	defer co.Close()
 
 	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
 	if err != nil {
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
+	defer nw.Close()
 
 	nr, err := nmsg.NewZMQReader(ep1 + ",connect," + tp)
 	if err != nil {
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
+	defer nr.Close()
 
 	ci, err := cnmsg.NewZMQInput(ep2 + ",connect," + tp)
-
 	if err != nil {
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
+	defer ci.Close()
 
 	ni := nmsg.NewInput(nr, 1000)
 	no := nmsg.UnbufferedOutput(nw)
