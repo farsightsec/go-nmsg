@@ -10,7 +10,6 @@ package nmsg
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"strings"
 
@@ -68,8 +67,6 @@ func munge_endpoint(ep string) (string, socketDirection, socketType, error) {
 					return "", sockdirInvalid, SocktypeInvalid, errors.New("socket type is already set")
 				}
 				socktype = SocktypePushpull
-			default:
-				return "", sockdirInvalid, SocktypeInvalid, fmt.Errorf("unknown endpoint token: %q", tok)
 			}
 		}
 
