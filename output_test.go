@@ -57,12 +57,12 @@ func TestUnBufferedOutput(t *testing.T) {
 	c := newCountWriter(t)
 	p, err := nmsg.Payload(testMessage(1000))
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	o := nmsg.UnbufferedOutput(c)
 	o.SetMaxSize(1500, 0)
 	if err := o.Send(p); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() < 1 {
 		t.Errorf("No write occurred")
@@ -84,7 +84,7 @@ func TestBufferedOutput(t *testing.T) {
 
 	// this should go in the buffer, and not be written
 	if err := o.Send(testPayload(800)); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() > 0 {
 		t.Error("Buffer did not suppress write")
@@ -93,7 +93,7 @@ func TestBufferedOutput(t *testing.T) {
 	// this should flush the buffer, causing one write,
 	// then go into the buffer, not causing a second write.
 	if err := o.Send(testPayload(800)); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() < 1 {
 		t.Error("Buffer did not write")
@@ -105,10 +105,10 @@ func TestBufferedOutput(t *testing.T) {
 	// this should flush the buffer, causing one write,
 	// then bypass the buffer and be written in two fragments
 	if err := o.Send(testPayload(1700)); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if err := o.Close(); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() < 4 {
 		t.Errorf("Missing writes: %d should be 4", c.Count())
@@ -125,7 +125,7 @@ func TestBufferedOutputNoConfig(t *testing.T) {
 	// this should go in the buffer with the default
 	// MinContainerSize maximum, and not be written
 	if err := o.Send(testPayload(300)); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() > 0 {
 		t.Error("Buffer did not suppress write")
@@ -134,7 +134,7 @@ func TestBufferedOutputNoConfig(t *testing.T) {
 	// this should flush the buffer, causing one write,
 	// then go into the buffer, not causing a second write.
 	if err := o.Send(testPayload(300)); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() < 1 {
 		t.Error("Buffer did not write")
@@ -146,10 +146,10 @@ func TestBufferedOutputNoConfig(t *testing.T) {
 	// this should flush the buffer, causing one write,
 	// then bypass the buffer and be written in two fragments
 	if err := o.Send(testPayload(600)); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if err := o.Close(); err != nil {
-		t.Errorf(err.Error())
+		t.Error(err.Error())
 	}
 	if c.Count() < 4 {
 		t.Errorf("Missing writes: %d should be 4", c.Count())
