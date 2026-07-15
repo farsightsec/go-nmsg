@@ -328,9 +328,9 @@ func TestZMQInproc(t *testing.T) {
 
 func TestZMQIpc(t *testing.T) {
 	doTestFor(t, "ipc:///tmp/TestZMQIpc1", "pushpull", doTestUnbuffered)
-	doTestFor(t, "ipc:///tmp/TestZMQIpc1", "pushpull", doTestBuffered)
-	doTestFor(t, "ipc:///tmp/TestZMQIpc2", "pubsub", doTestUnbuffered)
-	doTestFor(t, "ipc:///tmp/TestZMQIpc2", "pubsub", doTestBuffered)
+	doTestFor(t, "ipc:///tmp/TestZMQIpc2", "pushpull", doTestBuffered)
+	doTestFor(t, "ipc:///tmp/TestZMQIpc3", "pubsub", doTestUnbuffered)
+	doTestFor(t, "ipc:///tmp/TestZMQIpc4", "pubsub", doTestBuffered)
 }
 
 func TestZMQ_CGo_Local(t *testing.T) {
@@ -353,11 +353,13 @@ func TestZmq_Mixed_Local(t *testing.T) {
 	doTestForMixed(t, "tcp://127.0.0.1:", 7557, "pubsub", doTestMixedDo)
 }
 
-//// Inproc cgo-nmsg side fill writer buffer and hangs
-//func TestZmq_Mixed_Inproc(t *testing.T) {
-//	doTestForMixed(t, "inproc://TestZMQInproc", 100, "pushpull", doTestMixedDo)
-//	doTestForMixed(t, "inproc://TestZMQInproc", 200, "pubsub", doTestMixedDo)
-//}
+// inproc messaging takes place inside /a/ zmq context, meaning there is no communication
+// during a mixed test since cgo and nmsg sockets live on separate zmq contexts.
+func TestZmq_Mixed_Inproc(t *testing.T) {
+	t.Skip("skipping mixed inproc unit tests")
+	doTestForMixed(t, "inproc://TestZMQInproc", 100, "pushpull", doTestMixedDo)
+	doTestForMixed(t, "inproc://TestZMQInproc", 200, "pubsub", doTestMixedDo)
+}
 
 func TestZmq_Mixed_IPC(t *testing.T) {
 	doTestForMixed(t, "ipc:///tmp/TestZMQIpc", 100, "pushpull", doTestMixedDo)
