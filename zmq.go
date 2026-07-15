@@ -171,7 +171,12 @@ func (i *zmq_io) Read(p []byte) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
+	if len(buf) > len(p) {
+		return 0, io.ErrShortBuffer
+	}
+
 	copy(p, buf)
+
 	return len(buf), nil
 }
 
