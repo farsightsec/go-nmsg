@@ -33,6 +33,9 @@ type Output interface {
 	// Write sends the supplied message to the Output.
 	Write(*Message) error
 
+	// Closes the output, flushing any buffered data and releasing resources.
+	Close() error
+
 	// SetBuffered controls whether the output buffers Messages into containers
 	// before sending them. NmsgOutputs are buffered by default, but low volume
 	// sources may choose to turn this off to reduce latency.
@@ -80,6 +83,10 @@ type nmsgOutput struct {
 
 func (o *nmsgOutput) Write(m *Message) error {
 	return nmsgError(C.nmsg_output_write(o.output, m.message))
+}
+
+func (o *nmsgOutput) Close() error {
+	return nmsgError(C.nmsg_output_close(&o.output))
 }
 
 func (o *nmsgOutput) SetBuffered(buffered bool) {
@@ -164,6 +171,9 @@ type OutputFunc func(*Message) error
 
 // Write calls the underlying function with the supplied message
 func (o OutputFunc) Write(m *Message) error { return o(m) }
+
+// Close satisfies the Output interface with a no-op
+func (o OutputFunc) Close() error { return nil }
 
 // Flush satisfies the Output interface with a no-op
 func (o OutputFunc) Flush() error { return nil }

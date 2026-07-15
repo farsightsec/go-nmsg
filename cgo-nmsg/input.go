@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 DomainTools LLC
  * Copyright (c) 2017 by Farsight Security, Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -32,6 +33,9 @@ import (
 type Input interface {
 	// Read returns a Message or nil, and an error if any.
 	Read() (*Message, error)
+
+	// Closes and releases the input's resources.
+	Close() error
 
 	// SetFilterMsgtype instructs the input to discard all Messages
 	// not of the given vendor id and msgtype, specified by number.
@@ -68,6 +72,10 @@ func (i *nmsgInput) Read() (*Message, error) {
 		return messageFromC(msg), nil
 	}
 	return nil, nmsgError(res)
+}
+
+func (i *nmsgInput) Close() error {
+	return nmsgError(C.nmsg_input_close(&i.input))
 }
 
 func (i *nmsgInput) SetFilterMsgtype(vid, msgtype uint32) {
@@ -130,6 +138,9 @@ type InputFunc func() (*Message, error)
 
 // Read calls the underlying function to return the next message.
 func (i InputFunc) Read() (*Message, error) { return i() }
+
+// Closes satisfies the Input interface with a no-op
+func (i InputFunc) Close() error { return nil }
 
 // SetFilterMsgtype satisfies the Input interface with a no-op
 func (i InputFunc) SetFilterMsgtype(vendor, msgtype uint32) {}
