@@ -312,6 +312,9 @@ func (c *Container) ReadFrom(r io.Reader) (n int64, err error) {
 	if h.Magic != nmsgMagic {
 		return 0, &dataError{errBadMagic}
 	}
+	if h.Length > MaxContainerSize {
+		return 0, fmt.Errorf("container length exceeds max size (%d)", h.Length)
+	}
 
 	buf.Grow(int(h.Length))
 	if n, err = io.CopyN(&buf, r, int64(h.Length)); err != nil {
