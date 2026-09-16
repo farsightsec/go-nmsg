@@ -6,6 +6,7 @@ Build-Depends:
  debhelper-compat (= 13),
  dh-golang,
  golang-any,
+ golang-github-pebbe-zmq4-dev,
  golang-google-protobuf-dev,
  golang-github-dnstap-go-dnstap-dev,
  golang-gopkg-yaml.v2-dev,
@@ -43,6 +44,7 @@ Description: NMSG vendor base encoding modules for Golang
 Package: golang-github-farsightsec-go-nmsg-cgo-nmsg-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
+ golang-github-pebbe-zmq4-dev,
  pkg-config,
  libnmsg-dev,
  libzmq3-dev
