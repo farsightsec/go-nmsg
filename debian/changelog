@@ -1,3 +1,15 @@
+go-nmsg (0.4.0) debian-fsi; urgency=medium
+
+  * Port ZeroMQ support from libxs (crossroads.io) to libzmq (pebbe/zmq4).
+  * Add Close() method to Input and Output interfaces.
+  * Fix zlib bomb and container length integer overflow vulnerabilities.
+  * Guard against overflow in zmq_io.Read().
+  * Use zmq_ctx_new()/zmq_ctx_term() API; clean up ZMQ context at shutdown.
+  * Update go module dependencies.
+  * Test suite improvements.
+
+ -- DomainTools LLC <software@domaintools.com>  Mon, 16 Sep 2026 12:00:00 +0000
+
 go-nmsg (0.3.0-1) debian-fsi; urgency=medium
 
   * Add support for dnsobs message type.

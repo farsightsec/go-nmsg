@@ -1,7 +1,7 @@
 Source: go-nmsg
 Section: net
 Priority: optional
-Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
+Maintainer: DomainTools LLC <software@domaintools.com>
 Build-Depends:
  debhelper-compat (= 13),
  dh-golang,
@@ -45,7 +45,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
  pkg-config,
  libnmsg-dev,
- libxs-dev
+ libzmq3-dev
 Description: Golang bindings to the C libnmsg library
  The NMSG network message encapsulation library format is an efficient
  encoding of typed, structured data into payloads which are packed into
