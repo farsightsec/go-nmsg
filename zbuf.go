@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -30,16 +31,27 @@ func zbufDeflate(b []byte) ([]byte, error) {
 
 func zbufInflate(b []byte) ([]byte, error) {
 	br := bytes.NewReader(b)
+
 	var ilen uint32
 	binary.Read(br, binary.BigEndian, &ilen)
+
+	if ilen > MaxContainerSize {
+		return nil, fmt.Errorf("buffer length exceeds max size (%d)", ilen)
+	}
+
 	buf := bytes.NewBuffer(make([]byte, 0, int(ilen)))
+
 	r, err := zlib.NewReader(br)
 	if err != nil {
 		return nil, err
 	}
-	if _, err = io.Copy(buf, r); err != nil {
+
+	_, err = io.Copy(buf, r)
+	if err != nil {
 		return nil, err
 	}
+
 	r.Close()
+
 	return buf.Bytes(), nil
 }

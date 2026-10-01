@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2026 DomainTools LLC
  * Copyright (c) 2017 by Farsight Security, Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -259,4 +260,9 @@ func (co *containerOutput) SetBuffered(buffered bool) {
 // before sending.
 func (co *containerOutput) SetCompression(compress bool) {
 	co.c.config.Compress = compress
+}
+
+// Close flushes any buffered output and satisfies the Output interface
+func (co *containerOutput) Close() error {
+	return co.Flush()
 }
