@@ -2,7 +2,7 @@
 
 `go-nmsg` is a pure go implementation of the NMSG container and payload
 format used by the C [nmsg](https://github.com/farsightsec/nmsg) toolkit
-and library.
+and library, with optional ZMQ transport support when CGO is enabled.
 
 ## Synopsis
 

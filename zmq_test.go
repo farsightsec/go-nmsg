@@ -1,3 +1,5 @@
+//go:build cgo
+
 /*
  * Copyright (c) 2026 DomainTools LLC
  *
