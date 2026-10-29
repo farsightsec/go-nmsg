@@ -283,28 +283,31 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
-	defer co.Close()
 
 	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
 	if err != nil {
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
-	defer nw.Close()
 
 	nr, err := nmsg.NewZMQReader(ep1 + ",connect," + tp)
 	if err != nil {
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
-	defer nr.Close()
 
 	ci, err := cnmsg.NewZMQInput(ep2 + ",connect," + tp)
 	if err != nil {
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
+
+	// Close PUSH sides (co, nw) before their PULL peers (nr, ci) to avoid
+	// a ZMQ_LINGER hang in nmsg_output_close seen on bullseye.
 	defer ci.Close()
+	defer nw.Close()
+	defer nr.Close()
+	defer co.Close()
 
 	ni := nmsg.NewInput(nr, 1000)
 	no := nmsg.UnbufferedOutput(nw)
