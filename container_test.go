@@ -1,3 +1,5 @@
+//go:build cgo
+
 /*
  * Copyright (c) 2017 by Farsight Security, Inc.
  *
