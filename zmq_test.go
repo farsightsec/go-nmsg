@@ -283,40 +283,28 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
+	defer co.Close()
 
 	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
 	if err != nil {
-		co.Close()
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
+	defer nw.Close()
 
 	nr, err := nmsg.NewZMQReader(ep1 + ",connect," + tp)
 	if err != nil {
-		nw.Close()
-		co.Close()
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
+	defer nr.Close()
 
 	ci, err := cnmsg.NewZMQInput(ep2 + ",connect," + tp)
 	if err != nil {
-		nr.Close()
-		nw.Close()
-		co.Close()
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
-
-	// Close PUSH sides (co, nw) before their PULL peers (nr, ci) so the
-	// flush inside nmsg_output_close can still reach a connected peer and
-	// doesn't wedge on zmq_send. Observed hang on bullseye.
-	defer func() {
-		co.Close()
-		nw.Close()
-		nr.Close()
-		ci.Close()
-	}()
+	defer ci.Close()
 
 	ni := nmsg.NewInput(nr, 1000)
 	no := nmsg.UnbufferedOutput(nw)
