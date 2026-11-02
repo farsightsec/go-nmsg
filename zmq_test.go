@@ -226,14 +226,16 @@ func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
 		t.Error(err.Error())
 		return
 	}
-	defer writer.Close()
 
 	reader, err := cnmsg.NewZMQInput(ep + ",connect," + tp)
 	if err != nil {
+		writer.Close()
 		t.Error(err.Error())
 		return
 	}
+
 	defer reader.Close()
+	defer writer.Close()
 
 	fn(t, reader, writer)
 }
@@ -285,28 +287,35 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
-	defer co.Close()
 
 	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
 	if err != nil {
+		co.Close()
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
-	defer nw.Close()
 
 	nr, err := nmsg.NewZMQReader(ep1 + ",connect," + tp)
 	if err != nil {
+		nw.Close()
+		co.Close()
 		t.Error(err.Error() + " " + ep1)
 		return
 	}
-	defer nr.Close()
 
 	ci, err := cnmsg.NewZMQInput(ep2 + ",connect," + tp)
 	if err != nil {
+		nr.Close()
+		nw.Close()
+		co.Close()
 		t.Error(err.Error() + " " + ep2)
 		return
 	}
+
 	defer ci.Close()
+	defer nr.Close()
+	defer nw.Close()
+	defer co.Close()
 
 	ni := nmsg.NewInput(nr, 1000)
 	no := nmsg.UnbufferedOutput(nw)
