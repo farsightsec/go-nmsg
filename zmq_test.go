@@ -221,12 +221,7 @@ func doTestFor(t *testing.T, ep string, tp string, fn tester) {
 }
 
 func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
-	writer, err := cnmsg.NewZMQOutput(ep+",accept,"+tp, 2000)
-	if err != nil {
-		t.Error(err.Error())
-		return
-	}
-	defer writer.Close()
+	// Defer writer close later to make sure it always closes before the reader on return
 
 	reader, err := cnmsg.NewZMQInput(ep + ",connect," + tp)
 	if err != nil {
@@ -234,6 +229,13 @@ func doTestForCGo(t *testing.T, ep string, tp string, fn testerCgo) {
 		return
 	}
 	defer reader.Close()
+
+	writer, err := cnmsg.NewZMQOutput(ep+",accept,"+tp, 2000)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	defer writer.Close()
 
 	fn(t, reader, writer)
 }
@@ -280,19 +282,7 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 	ep1 := ep + strconv.Itoa(num)
 	ep2 := ep + strconv.Itoa(num+1)
 
-	co, err := cnmsg.NewZMQOutput(ep1+",accept,"+tp, 1000)
-	if err != nil {
-		t.Error(err.Error() + " " + ep1)
-		return
-	}
-	defer co.Close()
-
-	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
-	if err != nil {
-		t.Error(err.Error() + " " + ep2)
-		return
-	}
-	defer nw.Close()
+	// Defer all writer closes later to make sure they always close before the readers on return
 
 	nr, err := nmsg.NewZMQReader(ep1 + ",connect," + tp)
 	if err != nil {
@@ -307,6 +297,20 @@ func doTestForMixed(t *testing.T, ep string, num int, tp string, fn testerMixed)
 		return
 	}
 	defer ci.Close()
+
+	co, err := cnmsg.NewZMQOutput(ep1+",accept,"+tp, 1000)
+	if err != nil {
+		t.Error(err.Error() + " " + ep1)
+		return
+	}
+	defer co.Close()
+
+	nw, err := nmsg.NewZMQWriter(ep2 + ",accept," + tp)
+	if err != nil {
+		t.Error(err.Error() + " " + ep2)
+		return
+	}
+	defer nw.Close()
 
 	ni := nmsg.NewInput(nr, 1000)
 	no := nmsg.UnbufferedOutput(nw)
