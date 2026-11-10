@@ -2,16 +2,15 @@ Source: go-nmsg
 Section: net
 Priority: optional
 Maintainer: DomainTools LLC <software@domaintools.com>
-Build-Depends:
- debhelper-compat (= 13),
- dh-golang,
- golang-any,
- golang-github-pebbe-zmq4-dev,
- golang-google-protobuf-dev,
- golang-github-dnstap-go-dnstap-dev,
- golang-gopkg-yaml.v2-dev,
- libnmsg-dev (>= 1.4.0~),
- pkg-config,
+Build-Depends: debhelper-compat (= 13),
+               dh-golang,
+               golang-any,
+               golang-github-pebbe-zmq4-dev,
+               golang-google-protobuf-dev,
+               golang-github-dnstap-go-dnstap-dev,
+               golang-gopkg-yaml.v2-dev,
+               libnmsg-dev (>= 1.4.0~),
+               pkg-config,
 Standards-Version: 4.5.1
 Vcs-Git: https://github.com/farsightsec/go-nmsg.git
 Vcs-Browser: https://github.com/farsightsec/go-nmsg
@@ -33,9 +32,10 @@ Description: Pure Golang NMSG Library
 Package: golang-github-farsightsec-go-nmsg-base-dev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- golang-github-farsightsec-go-nmsg-dev (= ${binary:Version}),
- golang-github-dnstap-go-dnstap-dev,
- golang-google-protobuf-dev,
+         golang-github-farsightsec-go-nmsg-dev (= ${binary:Version}),
+         golang-github-dnstap-go-dnstap-dev,
+         golang-github-pebbe-zmq4-dev,
+         golang-google-protobuf-dev,
 Description: NMSG vendor base encoding modules for Golang
  This package provides generated Go code from Protocol Buffers Version 2
  specifications for NMSG vendor base encoding modules: Dns, DnsQR, Email,
