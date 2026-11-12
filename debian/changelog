@@ -1,3 +1,9 @@
+go-nmsg (0.4.3) debian-fsi; urgency=medium
+
+  * Fix ZMQ package inclusion rules so all produced packages receive it.
+
+ -- DomainTools LLC <software@domaintools.com>  Thu, 12 Nov 2026 11:17:04 -0800
+
 go-nmsg (0.4.2) debian-fsi; urgency=medium
 
   * Add ZMQ to packaged debian dependencies list for downstream inclusion.
